@@ -1,0 +1,28 @@
+<form #tenantIdSetupForm="ngForm" class="loginForm" (ngSubmit)="setupLoginMode()" novalidate>
+  <div class="legend form-block center" translate>Tenant setup</div>
+  <c8y-form-group class="tenantField" id="tenantField">
+    <label for="tenant" translate>Tenant ID</label>
+    <input
+      [(ngModel)]="model.tenant"
+      #tenant="ngModel"
+      type="text"
+      name="tenant"
+      id="tenant"
+      autocapitalize="off"
+      autocorrect="off"
+      class="form-control"
+      placeholder="{{ 'e.g.' | translate }} t12345"
+      placeholder-no-required-hint
+      required
+    />
+  </c8y-form-group>
+
+  <button
+    title="{{ 'Apply' | translate }}"
+    type="submit"
+    class="btn btn-primary btn-lg btn-block form-group"
+    [disabled]="!tenantIdSetupForm.form.valid"
+  >
+    {{ 'Apply' | translate }}
+  </button>
+</form>

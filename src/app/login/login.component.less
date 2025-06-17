@@ -1,0 +1,133 @@
+.login-panel {
+  display: grid;
+  min-height: 100vh;
+  &.isc8y{
+    @media( min-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+c8y-bootstrap, c8y-login, c8y-cookie-banner {
+  display: contents;
+}
+
+.square{
+  background-color: var(--c8y-palette-gray-10);
+  color: var(--c8y-palette-gray-90);
+  display: none;
+  .c8y-dark-theme & {
+    background-color: var(--c8y-palette-gray-100);
+    color: var(--c8y-palette-gray-20);
+  }
+  @media( min-width: 768px) {
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+  }
+}
+
+.password-strength {
+  width: 180px;
+  margin-bottom: 20px;
+
+  .table & {
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.password-strength>div {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  background-color: var(--c8y-palette-gray-90);
+}
+
+.password-strength>.password-strength-label {
+  float: left;
+  color: var(--c8y-component-form-label-color, var(--c8y-root-component-form-label-color));
+}
+
+.password-green .password-bar,
+.password-yellow .password-bar,
+.password-red .password-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+
+.password-green {
+  .password-bar {
+    width: 100%;
+    background-color: var(--palette-status-success, var(--c8y-palette-status-success));
+  }
+}
+
+.password-yellow {
+  .password-bar {
+    width: 50%;
+    background-color: var(--palette-status-warning, var(--c8y-palette-status-warning));
+  }
+}
+
+.password-red {
+  .password-bar {
+    width: 25%;
+    background-color: var(--palette-status-danger, var(--c8y-palette-status-danger));;
+  }
+}
+
+.login-form {
+  height: auto;
+  padding: 32px;
+  width: 100%;
+  margin: auto;
+  @media (min-width: 768px) {
+    animation-delay: .5s;
+    max-width: 550px;
+    .isc8y &{
+      padding-left: 56px;
+      margin-left: 0;
+    }
+  }
+}
+
+.init-load {
+  height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 320px;
+}
+
+.mainlogo { 
+  background-image: var(--brand-logo-img, var(--c8y-brand-logo-img));
+  width: 100%;
+  max-width: 350px;
+  padding-bottom: var(--brand-logo-height, var(--c8y-brand-logo-height));
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: block;
+  margin: 0 auto 32px;
+  &.c8y-logo{
+    margin: 0 0 32px;
+    background-position: top left;
+    filter: brightness(.4);
+    .c8y-dark-theme &{
+      filter: grayscale(1) contrast(0.5) brightness(1.4);
+    }
+  }
+}
+
+.mainlogo[src] {
+  background: none;
+  padding-bottom: 0;
+}

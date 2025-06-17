@@ -1,0 +1,39 @@
+<form #twoFactorForm="ngForm" class="loginForm" (ngSubmit)="save()" novalidate>
+  <div class="legend form-block center" translate>Two-factor authentication</div>
+
+  <c8y-form-group [ngClass]="requestInProgress || twoFactorForm.invalid ? 'p-b-8' : ''">
+    <label translate>Provide your phone number</label>
+
+    <input
+      class="form-control"
+      [(ngModel)]="phoneNumber"
+      #contactPhone="ngModel"
+      type="text"
+      name="phone"
+      autocomplete="off"
+      placeholder="{{ 'e.g. +49 9 876 543 210`LOCALIZE`' | translate }}"
+      c8yPhoneValidation
+      required
+    />
+  </c8y-form-group>
+
+  <button
+    title="{{ 'Save and continue' | translate }}"
+    type="submit"
+    class="btn btn-primary btn-lg btn-block form-group"
+    [disabled]="requestInProgress || twoFactorForm.invalid"
+  >
+    {{ 'Save and continue' | translate }}
+  </button>
+
+  <div class="d-flex m-t-8">
+    <a
+      title="{{ 'Login' | translate }}"
+      class="small pointer m-auto"
+      href="#"
+      (click)="onCancel.emit()"
+    >
+      {{ 'Login' | translate }}
+    </a>
+  </div>
+</form>
