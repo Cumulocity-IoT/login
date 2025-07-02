@@ -167,7 +167,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     } catch (e) {
       await this.loginService.clearCookies();
       const preferredLoginOptionType = this.loginService.loginMode.type;
-      if (preferredLoginOptionType === TenantLoginOptionType.OAUTH2) {
+      if (preferredLoginOptionType === TenantLoginOptionType.OAUTH2 && e.res?.status !== 403) {
         this.loginService.redirectToOauth();
       } else {
         this.reset(false);
