@@ -326,18 +326,18 @@ export class LoginService extends SimplifiedAuthService {
     if (redirectPathFromSessionStorage) {
       sessionStorage.removeItem('c8yRedirectAfterLoginPath');
       if (redirectPathFromSessionStorage.includes('?')) {
-        const queryParams = new URLSearchParams(redirectPathFromSessionStorage);
+        const { hash, searchParams, pathname } = new URL(
+          redirectPathFromSessionStorage,
+          window.location.origin
+        );
         for (const param of this.queryParamsToRemove) {
-          queryParams.delete(param);
+          searchParams.delete(param);
         }
-        const newQueryParams = queryParams.toString();
-        const redirectWithoutQueryParams = redirectPathFromSessionStorage.split('?', 1)[0];
-        const hash = redirectPathFromSessionStorage.split('#', 2)[1] || '';
+        const newQueryParams = searchParams.toString();
 
         const queryParamsToAppend = newQueryParams ? `?${newQueryParams}` : '';
-        const hashToAppend = hash ? `#${hash}` : '';
-        redirectPathFromSessionStorage =
-          redirectWithoutQueryParams + queryParamsToAppend + hashToAppend;
+        const hashToAppend = hash || '';
+        redirectPathFromSessionStorage = pathname + queryParamsToAppend + hashToAppend;
       }
       return Promise.resolve(redirectPathFromSessionStorage);
     }
