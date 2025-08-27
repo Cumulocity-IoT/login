@@ -32,6 +32,15 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
   }
 }
 
+.c8y-system-theme {
+  @media (prefers-color-scheme: dark){
+    .square{
+      background-color: var(--c8y-palette-gray-100);
+      color: var(--c8y-palette-gray-20);
+    }
+  }
+}
+
 .password-strength {
   width: 180px;
   margin-bottom: 20px;
@@ -129,6 +138,15 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
     }
   }
 }
+
+.c8y-system-theme {
+  @media (prefers-color-scheme: dark){
+    .mainlogo.c8y-logo{
+       filter: grayscale(1) contrast(0.5) brightness(1.4);
+    }
+  }
+}
+
 
 .mainlogo[src] {
   background: none;
