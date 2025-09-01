@@ -52,6 +52,7 @@ export class LoginService extends SimplifiedAuthService {
     'error_description'
   ] as const;
 
+  private readonly IDP_HINT_QUERY_PARAM = 'idp_hint';
   private translateService = inject(TranslateService);
   ERROR_MESSAGES = {
     minlength: gettext('Password must have at least 8 characters and no more than 32.'),
@@ -125,6 +126,7 @@ export class LoginService extends SimplifiedAuthService {
   }
 
   redirectToOauth() {
+    const idpHint = this.getIdpHintFromQueryParams();
     const { initRequest, flowControlledByUI } = this.oauthOptions;
     const fullPath = `${window.location.origin}${window.location.pathname}`;
     const redirectUrl = encodeURIComponent(fullPath);
@@ -138,6 +140,8 @@ export class LoginService extends SimplifiedAuthService {
         .then(res => res.json())
         .then((res: any) => (window.location.href = res.redirectTo))
         .catch(ex => this.showSsoError(ex));
+    } else if (idpHint) {
+      window.location.href = `${initRequest}${originUriParam}&${this.IDP_HINT_QUERY_PARAM}=${idpHint}`;
     } else {
       window.location.href = `${initRequest}${originUriParam}`;
     }
@@ -647,5 +651,10 @@ export class LoginService extends SimplifiedAuthService {
       throw error;
     }
     return response;
+  }
+
+  private getIdpHintFromQueryParams(): string | null {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(this.IDP_HINT_QUERY_PARAM) || null;
   }
 }
