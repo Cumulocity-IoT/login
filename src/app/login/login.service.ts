@@ -315,7 +315,11 @@ export class LoginService extends SimplifiedAuthService {
     if (!redirectPath) {
       return false;
     }
-    const userHasAccessToApp = await this.userHasAccessToApp(user, redirectPath);
+    const userHasAccessToApp =
+      // in case of local development we do not need to verify if the user has access to the app
+      // This way developers do not need to create the application in the tenant before developing
+      window.location.hostname === 'localhost' ||
+      (await this.userHasAccessToApp(user, redirectPath));
 
     if (!userHasAccessToApp) {
       return false;
