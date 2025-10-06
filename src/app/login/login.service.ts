@@ -8,10 +8,11 @@ import {
   ICurrentTenant,
   IFetchResponse,
   ITenantLoginOption,
-  IUser,
   TenantLoginOptionsService,
   TenantService,
-  UserService
+  UserService,
+  ICurrentUser,
+  IUser
 } from '@c8y/client';
 import { TenantUiService, ModalService, Status, SimplifiedAuthService } from '@c8y/ngx-components';
 import { gettext } from '@c8y/ngx-components/gettext';
@@ -289,8 +290,18 @@ export class LoginService extends SimplifiedAuthService {
       auth = this.cookieAuth;
     }
 
-    const userRes = await this.user.current();
-    const user = userRes.data;
+    let user: ICurrentUser | IUser;
+    try {
+      const { data } = await this.user.current();
+      user = data;
+    } catch (e) {
+      if (e.res?.status === 403) {
+        const { data } = await this.user.currentWithEffectiveRoles();
+        user = data;
+      } else {
+        throw e;
+      }
+    }
 
     const supportUserName = this.getSupportUserName(credentials);
     const token = this.setCredentials(
@@ -310,7 +321,7 @@ export class LoginService extends SimplifiedAuthService {
     return this.ensureUserPermissionsForRedirect(user);
   }
 
-  async ensureUserPermissionsForRedirect(user: IUser) {
+  async ensureUserPermissionsForRedirect(user: IUser | ICurrentUser) {
     const redirectPath = await this.getRedirectPath();
     if (!redirectPath) {
       return false;
@@ -358,7 +369,10 @@ export class LoginService extends SimplifiedAuthService {
     return matches ? matches[0] : null;
   }
 
-  async userHasAccessToApp(user: IUser, redirectPath: string): Promise<false | string> {
+  async userHasAccessToApp(
+    user: IUser | ICurrentUser,
+    redirectPath: string
+  ): Promise<false | string> {
     if (!redirectPath) {
       return false;
     }
@@ -390,7 +404,7 @@ export class LoginService extends SimplifiedAuthService {
    * @param user The current user object.
    * @param supportUserName The current support user name.
    */
-  async authFulfilled(tenant?: ICurrentTenant, user?: IUser) {
+  async authFulfilled(tenant?: ICurrentTenant, user?: ICurrentUser | IUser) {
     if (!tenant) {
       const { data } = await this.tenant.current({ withParent: true });
       tenant = data;
@@ -398,8 +412,17 @@ export class LoginService extends SimplifiedAuthService {
     }
 
     if (!user) {
-      const { data } = await this.user.current();
-      user = data;
+      try {
+        const { data } = await this.user.current();
+        user = data;
+      } catch (e) {
+        if (e.res?.status === 403) {
+          const { data } = await this.user.currentWithEffectiveRoles();
+          user = data;
+        } else {
+          throw e;
+        }
+      }
     }
 
     this.ui.setUser({ user });
