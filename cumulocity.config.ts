@@ -23,6 +23,6 @@ export default {
   },
   buildTime: {
     federation: 'none',
-    skipMonacoPlugin: true
+    skipMonacoLanguageSupport: true
   }
 } as const satisfies ConfigurationOptions;
