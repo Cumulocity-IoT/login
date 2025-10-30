@@ -1,128 +1,127 @@
 <div class="login-panel {{ platformAnimationSrc ? 'isc8y' : '' }}">
-  <div
-    class="square animated fadeIn"
-    *ngIf="platformAnimationSrc"
-  >
-    <img [src]="platformAnimationSrc" />
-  </div>
+  @if (platformAnimationSrc) {
+    <div class="square animated fadeIn">
+      <img [src]="platformAnimationSrc" />
+    </div>
+  }
 
-  <div
-    class="login-form animated fadeIn"
-    *ngIf="currentView !== LOGIN_VIEWS.None"
-    [ngSwitch]="currentView"
-  >
-    <main class="card-block p-b-0 form-group-lg">
-      <span class="mainlogo {{ !isBrandLogoSet ? 'c8y-logo' : '' }}"></span>
-      <ng-container *ngSwitchCase="LOGIN_VIEWS.Credentials">
-        <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
-          <h2
-            class="m-b-8"
-            translate
-          >
-            Welcome
-          </h2>
-          <p
-            class="text-16 m-b-40"
-            translate
-          >
-            Log in to access your IoT platform.
-          </p>
-        </span>
-      </ng-container>
-      <ng-container *ngSwitchCase="LOGIN_VIEWS.RecoverPassword">
-        <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
-          <h2
-            class="m-b-8"
-            translate
-          >
-            Reset password
-          </h2>
-          <p
-            class="text-16 m-b-40"
-            translate
-          >
-            Enter your email address and we'll send you a secure link to reset your password.
-          </p>
-        </span>
-      </ng-container>
-      <c8y-alert-outlet
-        class="m-b-24 d-block"
-        position="static"
-      ></c8y-alert-outlet>
-
-      <c8y-credentials
-        *ngSwitchCase="LOGIN_VIEWS.Credentials"
-        (onChangeView)="handleLoginTemplate($event)"
-        [loginViewParams]="loginViewParams"
-      ></c8y-credentials>
-      <c8y-recover-password
-        *ngSwitchCase="LOGIN_VIEWS.RecoverPassword"
-        (onChangeView)="handleLoginTemplate($event)"
-      ></c8y-recover-password>
-      <c8y-change-password
-        *ngSwitchCase="LOGIN_VIEWS.ChangePassword"
-        (onChangeView)="handleLoginTemplate($event)"
-        [credentials]="credentials"
-      ></c8y-change-password>
-      <c8y-totp-auth
-        *ngSwitchCase="LOGIN_VIEWS.TotpChallenge"
-        (onCancel)="reset(false)"
-        [view]="currentView"
-        [credentials]="credentials"
-      ></c8y-totp-auth>
-      <c8y-totp-auth
-        *ngSwitchCase="LOGIN_VIEWS.TotpSetup"
-        (onCancel)="reset(false)"
-        [view]="currentView"
-        [credentials]="credentials"
-      ></c8y-totp-auth>
-      <c8y-sms-challenge
-        *ngSwitchCase="LOGIN_VIEWS.SmsChallenge"
-        (onCancel)="reset(false)"
-        [credentials]="credentials"
-      ></c8y-sms-challenge>
-
-      <c8y-provide-phone-number
-        *ngSwitchCase="LOGIN_VIEWS.ProvidePhoneNumber"
-        (onCancel)="reset(false)"
-        (onChangeView)="handleLoginTemplate($event)"
-        [credentials]="credentials"
-      ></c8y-provide-phone-number>
-      <c8y-tenant-id-setup
-        *ngSwitchCase="LOGIN_VIEWS.TenantIdSetup"
-        (onChangeView)="handleLoginTemplate($event)"
-      ></c8y-tenant-id-setup>
-
-      <c8y-missing-application-access
-        *ngSwitchCase="LOGIN_VIEWS.MissingApplicationAccess"
-      ></c8y-missing-application-access>
-
-      <div
-        class="text-center m-t-8"
-        *ngIf="!!(ui.state$ | async).loginExtraLink"
-      >
-        <div *ngIf="!!(ui.state$ | async).loginExtraLink.length; else singleExtraLink">
-          <a
-            class="small d-block m-t-8"
-            title="{{ link.label }}"
-            role="button"
-            *ngFor="let link of (ui.state$ | async).loginExtraLink"
-            [href]="link.url"
-          >
-            {{ link.label }}
-          </a>
-        </div>
-        <ng-template #singleExtraLink>
-          <a
-            class="small"
-            title="{{ (ui.state$ | async).loginExtraLink.label }}"
-            role="button"
-            [href]="(ui.state$ | async).loginExtraLink.url"
-          >
-            {{ (ui.state$ | async).loginExtraLink.label }}
-          </a>
-        </ng-template>
-      </div>
-    </main>
-  </div>
+  @if (currentView !== LOGIN_VIEWS.None) {
+    <div class="login-form animated fadeIn">
+      <main class="card-block p-b-0 form-group-lg">
+        <span class="mainlogo {{ !isBrandLogoSet ? 'c8y-logo' : '' }}"></span>
+        <c8y-alert-outlet
+          class="m-b-24 d-block"
+          position="static"
+        ></c8y-alert-outlet>
+        @switch (currentView) {
+          @case (LOGIN_VIEWS.Credentials) {
+            <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
+              <h2
+                class="m-b-8"
+                translate
+              >
+                Welcome
+              </h2>
+              <p
+                class="text-16 m-b-40"
+                translate
+              >
+                Log in to access your IoT platform.
+              </p>
+            </span>
+            <c8y-credentials
+              (onChangeView)="handleLoginTemplate($event)"
+              [loginViewParams]="loginViewParams"
+            ></c8y-credentials>
+          }
+          @case (LOGIN_VIEWS.RecoverPassword) {
+            <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
+              <h2
+                class="m-b-8"
+                translate
+              >
+                Reset password
+              </h2>
+              <p
+                class="text-16 m-b-40"
+                translate
+              >
+                Enter your email address and we'll send you a secure link to reset your password.
+              </p>
+            </span>
+            <c8y-recover-password
+              [recoverPasswordData]="recoverPasswordData"
+              (onChangeView)="handleLoginTemplate($event)"
+            ></c8y-recover-password>
+          }
+          @case (LOGIN_VIEWS.ChangePassword) {
+            <c8y-change-password
+              (onChangeView)="handleLoginTemplate($event)"
+              [credentials]="credentials"
+            ></c8y-change-password>
+          }
+          @case (LOGIN_VIEWS.TotpChallenge) {
+            <c8y-totp-auth
+              (onCancel)="reset(false)"
+              [view]="currentView"
+              [credentials]="credentials"
+            ></c8y-totp-auth>
+          }
+          @case (LOGIN_VIEWS.TotpSetup) {
+            <c8y-totp-auth
+              (onCancel)="reset(false)"
+              [view]="currentView"
+              [credentials]="credentials"
+            ></c8y-totp-auth>
+          }
+          @case (LOGIN_VIEWS.SmsChallenge) {
+            <c8y-sms-challenge
+              (onCancel)="reset(false)"
+              [credentials]="credentials"
+            ></c8y-sms-challenge>
+          }
+          @case (LOGIN_VIEWS.ProvidePhoneNumber) {
+            <c8y-provide-phone-number
+              (onCancel)="reset(false)"
+              (onChangeView)="handleLoginTemplate($event)"
+              [credentials]="credentials"
+            ></c8y-provide-phone-number>
+          }
+          @case (LOGIN_VIEWS.TenantIdSetup) {
+            <c8y-tenant-id-setup (onChangeView)="handleLoginTemplate($event)"></c8y-tenant-id-setup>
+          }
+          @case (LOGIN_VIEWS.MissingApplicationAccess) {
+            <c8y-missing-application-access></c8y-missing-application-access>
+          }
+        }
+        @if (!!(ui.state$ | async).loginExtraLink) {
+          <div class="text-center m-t-8">
+            @if (!!(ui.state$ | async).loginExtraLink.length) {
+              <div>
+                @for (link of (ui.state$ | async).loginExtraLink; track link) {
+                  <a
+                    class="small d-block m-t-8"
+                    title="{{ link.label }}"
+                    role="button"
+                    [href]="link.url"
+                  >
+                    {{ link.label }}
+                  </a>
+                }
+              </div>
+            } @else {
+              <a
+                class="small"
+                title="{{ (ui.state$ | async).loginExtraLink.label }}"
+                role="button"
+                [href]="(ui.state$ | async).loginExtraLink.url"
+              >
+                {{ (ui.state$ | async).loginExtraLink.label }}
+              </a>
+            }
+          </div>
+        }
+      </main>
+    </div>
+  }
 </div>

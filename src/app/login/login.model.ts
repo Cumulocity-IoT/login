@@ -10,6 +10,11 @@ export interface LoginEvent {
   view: LoginViews;
   credentials?: ICredentials;
   loginViewParams?: CredentialsComponentParams | { [key: string]: any };
+  recoverPasswordData?: {
+    email: string;
+    tokenStatus: 'valid' | 'invalid' | 'expired';
+    tenantId?: string;
+  };
 }
 
 export enum LoginViews {

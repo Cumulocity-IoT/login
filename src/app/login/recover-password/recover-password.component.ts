@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { UserService } from '@c8y/client';
 import { LoginService } from '../login.service';
 import { LoginEvent, LoginViews } from '../login.model';
@@ -7,10 +7,10 @@ import {
   C8yTranslateDirective,
   FormGroupComponent,
   RequiredInputPlaceholderDirective,
-  C8yTranslatePipe
+  C8yTranslatePipe,
+  AlertService
 } from '@c8y/ngx-components';
-
-import { NgIf } from '@angular/common';
+import { gettext } from '@c8y/ngx-components/gettext';
 
 @Component({
   selector: 'c8y-recover-password',
@@ -20,13 +20,13 @@ import { NgIf } from '@angular/common';
   imports: [
     FormsModule,
     C8yTranslateDirective,
-    NgIf,
     FormGroupComponent,
     RequiredInputPlaceholderDirective,
     C8yTranslatePipe
   ]
 })
 export class RecoverPasswordComponent implements OnInit {
+  @Input() recoverPasswordData: LoginEvent['recoverPasswordData'];
   @Output() onChangeView = new EventEmitter<LoginEvent>();
   LOGIN_VIEWS = LoginViews;
   isLoading = false;
@@ -37,11 +37,27 @@ export class RecoverPasswordComponent implements OnInit {
 
   constructor(
     private users: UserService,
-    public loginService: LoginService
+    public loginService: LoginService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit() {
-    this.model.tenantId = this.loginService.getTenant();
+    if (this.recoverPasswordData) {
+      this.model.email = this.recoverPasswordData.email || '';
+      this.model.tenantId = this.recoverPasswordData.tenantId || '';
+
+      const message =
+        this.recoverPasswordData.tokenStatus === 'expired'
+          ? gettext('This password reset link expired. To continue, request a new one.')
+          : this.recoverPasswordData.tokenStatus === 'invalid'
+            ? gettext('This password reset link is invalid. To continue, request a new one.')
+            : '';
+      if (message) {
+        this.alertService.danger(message);
+      }
+    } else {
+      this.model.tenantId = this.loginService.getTenant();
+    }
   }
 
   async resetPassword() {

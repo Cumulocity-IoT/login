@@ -21,7 +21,7 @@ import { switchMap } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY } from 'rxjs';
 import { isEmpty } from 'lodash-es';
 import { TranslateService } from '@ngx-translate/core';
-import { SsoData } from './login.model';
+import { LoginEvent, SsoData } from './login.model';
 import {
   getStoredToken,
   getStoredTfaToken,
@@ -544,6 +544,28 @@ export class LoginService extends SimplifiedAuthService {
   async clearCookies() {
     // clear cookies but avoid redirect on logout
     return await this.cookieAuth.logout({ redirect: 'manual' });
+  }
+
+  /**
+   * Validates the reset password token.
+   * @param token The reset password token to validate.
+   * @param email The email address associated with the token.
+   * @returns  Returns 'valid', 'invalid', or 'expired' based on the token status.
+   */
+  async validateResetToken(
+    token: string,
+    email: string
+  ): Promise<LoginEvent['recoverPasswordData']['tokenStatus']> {
+    try {
+      await this.user.validateResetToken(token, email);
+      return 'valid';
+    } catch (e) {
+      if (e.res?.status === 422) {
+        return 'expired';
+      } else {
+        return 'invalid';
+      }
+    }
   }
 
   /**
