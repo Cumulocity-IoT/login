@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { CookieBannerComponent, TranslationLoaderService } from '@c8y/ngx-components';
-import { LoginComponent } from '../login';
+import { CookieBannerComponent } from '@c8y/ngx-components';
+import { LoginComponent } from '../login/login.component';
 
 @Component({
   selector: 'c8y-bootstrap',
@@ -8,9 +8,4 @@ import { LoginComponent } from '../login';
   standalone: true,
   imports: [LoginComponent, CookieBannerComponent]
 })
-export class BootstrapLoginComponent {
-  constructor(
-    // only here to ensure the service is instantiated
-    public translationLoaderService: TranslationLoaderService
-  ) {}
-}
+export class BootstrapLoginComponent {}
