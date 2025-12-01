@@ -99,7 +99,6 @@
               }
             ],
             "styles": [
-              "@c8y/style/main.less",
               "src/styles.less"
             ]
           }
