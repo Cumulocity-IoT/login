@@ -1,6 +1,6 @@
 {
   "name": "login",
-  "version": "1023.17.10",
+  "version": "1023.17.11",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -29,10 +29,10 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
-    "@c8y/bootstrap": "1023.17.10",
-    "@c8y/client": "1023.17.10",
-    "@c8y/ngx-components": "1023.17.10",
-    "@c8y/style": "1023.17.10",
+    "@c8y/bootstrap": "1023.17.11",
+    "@c8y/client": "1023.17.11",
+    "@c8y/ngx-components": "1023.17.11",
+    "@c8y/style": "1023.17.11",
     "monaco-editor": "~0.53.0",
     "ngx-bootstrap": "20.0.2",
     "rxjs": "7.8.2",
@@ -40,11 +40,11 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.13",
-    "@angular/cli": "^20.3.13",
+    "@angular/build": "^20.3.14",
+    "@angular/cli": "^20.3.14",
     "@angular/compiler-cli": "^20.3.0",
-    "@c8y/devkit": "1023.17.10",
-    "@c8y/options": "1023.17.10",
+    "@c8y/devkit": "1023.17.11",
+    "@c8y/options": "1023.17.11",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
