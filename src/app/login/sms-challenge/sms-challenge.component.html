@@ -1,47 +1,62 @@
-<form #twoFactorForm="ngForm" class="loginForm" (ngSubmit)="verifyTFACode()" novalidate>
-  <div class="legend form-block center" translate>Two-factor authentication</div>
+<form
+  class="loginForm"
+  #twoFactorForm="ngForm"
+  (ngSubmit)="verifyTFACode()"
+  novalidate
+>
+  <div
+    class="legend form-block center"
+    translate
+  >
+    Two-factor authentication
+  </div>
 
   <c8y-form-group>
     <label translate>Verification code</label>
     <input
-      [(ngModel)]="model.smsToken"
-      #sms_token="ngModel"
-      type="text"
-      name="sms_token"
-      autofocus
-      autocapitalize="off"
-      autocorrect="off"
       class="form-control"
       placeholder="{{ 'e.g.' | translate }} 624327"
+      name="sms_token"
+      type="text"
+      autofocus
       required
+      [(ngModel)]="model.smsToken"
+      #sms_token="ngModel"
+      autocapitalize="off"
+      autocorrect="off"
     />
-    <p *ngIf="!twoFactorForm.form.valid || isLoading" class="help-block" translate>
-      Insert the code received via SMS.
-    </p>
+    @if (!twoFactorForm.form.valid || isLoading) {
+      <p
+        class="help-block"
+        translate
+      >
+        Insert the code received via SMS.
+      </p>
+    }
   </c8y-form-group>
 
   <button
+    class="btn btn-primary btn-lg btn-block form-group"
     title="{{ 'Verify' | translate }}"
     [disabled]="!twoFactorForm.form.valid || isLoading"
-    class="btn btn-primary btn-lg btn-block form-group"
   >
     {{ 'Verify' | translate }}
   </button>
 
   <div class="d-flex m-t-8 j-c-center">
     <button
-      type="button"
-      title="{{ 'Send new code' | translate }}"
-      [ngClass]="{ disabled: isLoading }"
       class="btn btn-link btn-sm"
+      title="{{ 'Send new code' | translate }}"
+      type="button"
+      [ngClass]="{ disabled: isLoading }"
       (click)="resendTFASms()"
     >
       {{ 'Send new code' | translate }}
     </button>
     <button
-      type="button"
-      title="{{ 'Log in' | translate }}"
       class="btn btn-link btn-sm"
+      title="{{ 'Log in' | translate }}"
+      type="button"
       (click)="onCancel.emit()"
     >
       {{ 'Log in' | translate }}

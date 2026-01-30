@@ -11,7 +11,7 @@ import {
 } from '@c8y/ngx-components';
 import { gettext } from '@c8y/ngx-components/gettext';
 import { FormsModule } from '@angular/forms';
-import { NgIf, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { LoginEvent, LoginViews } from '../login.model';
 
 @Component({
@@ -24,7 +24,6 @@ import { LoginEvent, LoginViews } from '../login.model';
     C8yTranslateDirective,
     FormGroupComponent,
     RequiredInputPlaceholderDirective,
-    NgIf,
     NgClass,
     C8yTranslatePipe
   ]
@@ -75,7 +74,7 @@ export class SmsChallengeComponent {
   }
 
   private async usesOAuthInternal() {
-    return this.loginService.isPasswordGrantLogin(this.credentials);
+    return this.loginService.isPasswordGrantLogin();
   }
 
   private async verifyCodeWithOauth() {

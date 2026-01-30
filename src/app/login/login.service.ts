@@ -37,7 +37,6 @@ import {
 export class LoginService extends SimplifiedAuthService {
   rememberMe = false;
   loginMode: ITenantLoginOption;
-  managementLoginMode: ITenantLoginOption;
   oauthOptions: ITenantLoginOption;
   isFirstLogin = true;
   automaticLoginInProgress$ = new BehaviorSubject(true);
@@ -435,7 +434,7 @@ export class LoginService extends SimplifiedAuthService {
    * @param credentials The credentials for that login
    */
   async switchLoginMode(credentials?: ICredentials) {
-    const isPasswordGrantLogin = await this.isPasswordGrantLogin(credentials);
+    const isPasswordGrantLogin = await this.isPasswordGrantLogin();
     if (isPasswordGrantLogin && credentials) {
       const res = await this.generateOauthToken(credentials);
       if (!res?.ok) {
@@ -454,7 +453,7 @@ export class LoginService extends SimplifiedAuthService {
   }
 
   async generateOauthToken(credentials?: ICredentials): Promise<IFetchResponse | null> {
-    if ((await this.isPasswordGrantLogin(credentials)) && credentials) {
+    if ((await this.isPasswordGrantLogin()) && credentials) {
       const params = new URLSearchParams({
         grant_type: 'PASSWORD',
         username: credentials.user,
@@ -473,17 +472,8 @@ export class LoginService extends SimplifiedAuthService {
     return null;
   }
 
-  async isPasswordGrantLogin(credentials?: ICredentials) {
-    let loginMode = this.loginMode;
-
-    if (this.isSupportUser(credentials)) {
-      if (!this.managementLoginMode) {
-        this.managementLoginMode = await this.getManagementLoginMode();
-      }
-      loginMode = this.managementLoginMode;
-    }
-
-    return this.tenantUiService.isOauthInternal(loginMode);
+  async isPasswordGrantLogin() {
+    return this.tenantUiService.isOauthInternal(this.loginMode);
   }
 
   /**
@@ -686,11 +676,6 @@ export class LoginService extends SimplifiedAuthService {
     return !isEmpty(credentials.tenant)
       ? `tenant/oauth?tenant_id=${credentials.tenant}`
       : `tenant/oauth`;
-  }
-
-  private async getManagementLoginMode() {
-    const managementLoginOptions = (await this.tenantLoginOptionsService.listForManagement()).data;
-    return this.tenantUiService.getPreferredLoginOption(managementLoginOptions);
   }
 
   private async handleErrorStatusCodes(response: IFetchResponse): Promise<IFetchResponse> {
