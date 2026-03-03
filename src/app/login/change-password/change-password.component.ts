@@ -1,23 +1,23 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
-import { LoginService } from '../login.service';
-import { IResetPassword, ICredentials, UserService, PasswordStrength } from '@c8y/client';
-import { LoginEvent, LoginViews } from '../login.model';
-import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
-import { PasswordStrengthValidatorDirective } from '../password-strength-validator.directive';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormsModule, NgModel, ValidatorFn } from '@angular/forms';
+import { ICredentials, IResetPassword, PasswordStrength, UserService } from '@c8y/client';
 import {
+  AlertService,
+  C8yTranslateDirective,
   C8yTranslatePipe,
-  PasswordCheckListComponent,
-  PasswordConfirm,
+  FormGroupComponent,
   MessageDirective,
   MessagesComponent,
-  RequiredInputPlaceholderDirective,
-  FormGroupComponent,
-  C8yTranslateDirective,
-  AlertService,
-  OptionsService
+  OptionsService,
+  PasswordCheckListComponent,
+  PasswordConfirm,
+  PasswordStrengthService,
+  PasswordValidationDirective,
+  PasswordValidationService,
+  RequiredInputPlaceholderDirective
 } from '@c8y/ngx-components';
-import { PasswordStrengthService } from '@c8y/ngx-components';
+import { LoginEvent, LoginViews } from '../login.model';
+import { LoginService } from '../login.service';
 
 @Component({
   selector: 'c8y-change-password',
@@ -27,10 +27,9 @@ import { PasswordStrengthService } from '@c8y/ngx-components';
   imports: [
     FormsModule,
     C8yTranslateDirective,
-    NgIf,
     FormGroupComponent,
     RequiredInputPlaceholderDirective,
-    PasswordStrengthValidatorDirective,
+    PasswordValidationDirective,
     MessagesComponent,
     MessageDirective,
     PasswordConfirm,
@@ -42,8 +41,8 @@ export class ChangePasswordComponent implements OnInit {
   @Input() credentials: ICredentials;
   @Output() onChangeView = new EventEmitter<LoginEvent>();
 
-  passwordPattern = /^[a-zA-Z0-9`~!@#$%^&*()_|+\-=?;:'",.<>{}[\]\\/]{8,32}$/;
   isLoading = false;
+  requirementsFulfilled = false;
   model = {
     tenantId: '',
     email: '',
@@ -53,22 +52,54 @@ export class ChangePasswordComponent implements OnInit {
   emailReadOnly = false;
   passwordStrengthEnforced = false;
 
+  private readonly DEFAULT_MIN_LENGTH = 8;
+  private minLength: number;
   private TOKEN_PARAM = 'token';
   private EMAIL_PARAM = 'email';
+
+  get effectiveMinLength(): number {
+    return this.passwordStrengthEnforced
+      ? this.minLength || this.DEFAULT_MIN_LENGTH
+      : this.DEFAULT_MIN_LENGTH;
+  }
+
+  newPasswordModel: NgModel;
+
+  @ViewChild('newPassword')
+  set _newPasswordModel(ngModel: NgModel) {
+    if (ngModel) {
+      this.newPasswordModel = ngModel;
+      ngModel.control.addValidators(this.passwordChecklistValidator);
+    }
+  }
 
   constructor(
     public loginService: LoginService,
     private passwordStrength: PasswordStrengthService,
     private users: UserService,
     private options: OptionsService,
-    private alert: AlertService
+    private alert: AlertService,
+    private passwordValidation: PasswordValidationService
   ) {}
+
+  // Keep form invalid when strength is enforced and checklist requirements aren't met.
+  passwordChecklistValidator: ValidatorFn = control =>
+    !this.passwordStrengthEnforced || this.requirementsFulfilled || !control.value
+      ? null
+      : { passwordStrengthChecklist: true };
 
   async ngOnInit() {
     this.model.tenantId = this.loginService.getTenant();
     this.model.email = this.options.get(this.EMAIL_PARAM, '');
     this.emailReadOnly = !!this.model.email;
-    this.passwordStrengthEnforced = await this.passwordStrength.getPasswordStrengthEnforced();
+
+    const [passwordStrengthEnforced, greenMinLength] = await Promise.all([
+      this.passwordStrength.getPasswordStrengthEnforced(),
+      this.passwordStrength.getGreenMinLength()
+    ]);
+
+    this.passwordStrengthEnforced = passwordStrengthEnforced;
+    this.minLength = greenMinLength;
   }
 
   async changePassword() {
@@ -97,5 +128,36 @@ export class ChangePasswordComponent implements OnInit {
       this.loginService.reset();
       this.isLoading = false;
     }
+  }
+
+  updateValidity(requirementsFulfilled: boolean) {
+    this.requirementsFulfilled = requirementsFulfilled;
+
+    if (!this.newPasswordModel) {
+      return;
+    }
+
+    this.newPasswordModel.control.updateValueAndValidity();
+
+    const errors = this.newPasswordModel.control.errors;
+    if (!errors || !this.passwordStrengthEnforced) {
+      return;
+    }
+
+    const password = this.model.newPassword || '';
+    const hasInvalidChars = password && !this.passwordValidation.hasValidCharsOnly(password);
+
+    const filteredErrors = { ...errors };
+    if (!this.requirementsFulfilled && !hasInvalidChars) {
+      // Checklist not fulfilled AND no invalid chars → show checklist error, hide pattern errors
+      delete filteredErrors['password'];
+      delete filteredErrors['passwordSimple'];
+    } else if (filteredErrors['password'] || filteredErrors['passwordSimple']) {
+      // Pattern error (invalid chars or checklist fulfilled) → show pattern error, hide checklist
+      delete filteredErrors['passwordStrengthChecklist'];
+    }
+
+    const remaining = Object.keys(filteredErrors).length ? filteredErrors : null;
+    this.newPasswordModel.control.setErrors(remaining);
   }
 }
