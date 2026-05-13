@@ -53,6 +53,8 @@ export class LoginService extends SimplifiedAuthService {
   ] as const;
 
   private readonly IDP_HINT_QUERY_PARAM = 'idp_hint';
+  private readonly PASSWORD_MAX_LENGTH = 32;
+  private readonly PASSWORD_ALLOWED_SYMBOLS = '`~!@#$%^&*()_|+-=?;:\'",.<>{}[]\\/';
   private translateService = inject(TranslateService);
   ERROR_MESSAGES = {
     minlength: gettext('Password must have at least 8 characters and no more than 32.'),
@@ -68,11 +70,8 @@ export class LoginService extends SimplifiedAuthService {
       'Password reset link expired. Please enter your email address to receive a new one.'
     ),
     tfa_pin_invalid: gettext('The code you entered is invalid. Please try again.'),
-    pattern_newPassword: this.translateService.instant(
-      gettext(
-        'Password must have at least 8 characters and no more than 32 and can only contain letters, numbers and following symbols: {{ symbols }}'
-      ),
-      { symbols: '`~!@#$%^&*()_|+-=?;:\'",.<>{}[]\\/' }
+    pattern_newPassword: gettext(
+      'Password must have at least {{ minLength }} characters and no more than {{ maxLength }} and can only contain letters, numbers and following symbols: {{ symbols }}'
     ),
     internationalPhoneNumber: gettext(
       'Must be a valid phone number (only digits, spaces, slashes ("/"), dashes ("-"), and plus ("+") allowed, for example: +49 9 876 543 210).'
@@ -123,6 +122,29 @@ export class LoginService extends SimplifiedAuthService {
     this.loginMode = this.tenantUiService.getPreferredLoginOption(loginOptions);
     this.oauthOptions =
       this.tenantUiService.getOauth2Option(loginOptions) || ({} as ITenantLoginOption);
+  }
+
+  /**
+   * Returns the password pattern error message with the correct min length.
+   * @param minLength The minimum password length from tenant configuration.
+   * @returns The translated error message.
+   */
+  getPasswordPatternErrorMessage(minLength: number): string {
+    return this.translateService.instant(this.ERROR_MESSAGES.pattern_newPassword, {
+      minLength,
+      maxLength: this.PASSWORD_MAX_LENGTH,
+      symbols: this.PASSWORD_ALLOWED_SYMBOLS
+    });
+  }
+
+  /**
+   * Builds a regex pattern for password validation with the given min length.
+   * @param minLength The minimum password length from tenant configuration.
+   * @returns A RegExp for password validation.
+   */
+  buildPasswordPattern(minLength: number): RegExp {
+    const allowedChars = 'a-zA-Z0-9`~!@#$%^&*()_|+\\-=?;:\'",.<>{}[\\]\\\\/';
+    return new RegExp(`^[${allowedChars}]{${minLength},${this.PASSWORD_MAX_LENGTH}}$`);
   }
 
   redirectToOauth() {
