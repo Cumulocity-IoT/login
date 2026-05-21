@@ -1,2 +1,10 @@
-<c8y-app-switcher-inline
-></c8y-app-switcher-inline>
+<c8y-app-switcher-inline></c8y-app-switcher-inline>
+
+<button
+  class="btn btn-primary btn-lg btn-block m-t-16"
+  title="{{ 'Logout' | translate }}"
+  (click)="logout()"
+>
+  <i [c8yIcon]="'logout'"></i>
+  {{ 'Logout' | translate }}
+</button>
