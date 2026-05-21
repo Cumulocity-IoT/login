@@ -91,6 +91,23 @@
             <c8y-tenant-id-setup (onChangeView)="handleLoginTemplate($event)"></c8y-tenant-id-setup>
           }
           @case (LOGIN_VIEWS.MissingApplicationAccess) {
+            <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
+              <h3
+                class="m-b-8 d-flex a-i-center"
+                translate
+              >
+                <i class="dlt-c8y-icon-warning text-warning m-r-8"></i>
+                <strong>Access not available</strong>
+              </h3>
+              <p
+                class="text-16 m-b-40"
+                translate
+              >
+                Your account doesn't have permission to open this application. Switch to an
+                available application below, log out, or contact your administrator to request
+                access.
+              </p>
+            </span>
             <c8y-missing-application-access></c8y-missing-application-access>
           }
         }
