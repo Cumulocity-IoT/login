@@ -1,15 +1,5 @@
-<form
-  class="loginForm"
-  #twoFactorForm="ngForm"
-  (ngSubmit)="verifyTFACode()"
-  novalidate
->
-  <div
-    class="legend form-block center"
-    translate
-  >
-    Two-factor authentication
-  </div>
+<form class="loginForm" #twoFactorForm="ngForm" (ngSubmit)="verifyTFACode()" novalidate>
+  <div class="legend form-block center" translate>Two-factor authentication</div>
 
   <c8y-form-group>
     <label translate>Verification code</label>
@@ -26,12 +16,7 @@
       autocorrect="off"
     />
     @if (!twoFactorForm.form.valid || isLoading) {
-      <p
-        class="help-block"
-        translate
-      >
-        Insert the code received via SMS.
-      </p>
+      <p class="help-block" translate>Insert the code received via SMS.</p>
     }
   </c8y-form-group>
 

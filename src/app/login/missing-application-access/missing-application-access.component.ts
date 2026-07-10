@@ -6,7 +6,7 @@ import { LoginService } from '../login.service';
   selector: 'c8y-missing-application-access',
   templateUrl: './missing-application-access.component.html',
   standalone: true,
-  imports: [AppSwitcherInlineComponent, C8yTranslatePipe, IconDirective]
+  imports: [AppSwitcherInlineComponent, C8yTranslatePipe, IconDirective],
 })
 export class MissingApplicationAccessComponent {
   private loginService = inject(LoginService);

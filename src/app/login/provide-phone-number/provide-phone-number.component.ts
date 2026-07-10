@@ -10,7 +10,7 @@ import {
   C8yTranslatePipe,
   FormGroupComponent,
   C8yTranslateDirective,
-  AlertService
+  AlertService,
 } from '@c8y/ngx-components';
 
 @Component({
@@ -24,8 +24,8 @@ import {
     NgClass,
     RequiredInputPlaceholderDirective,
     PhoneValidationDirective,
-    C8yTranslatePipe
-  ]
+    C8yTranslatePipe,
+  ],
 })
 export class ProvidePhoneNumberComponent {
   @Input() credentials: ICredentials;
@@ -39,7 +39,7 @@ export class ProvidePhoneNumberComponent {
   constructor(
     public loginService: LoginService,
     public alert: AlertService,
-    private userService: UserService
+    private userService: UserService,
   ) {}
 
   async save() {
@@ -49,7 +49,7 @@ export class ProvidePhoneNumberComponent {
       await this.sendTFASms();
       this.onChangeView.emit({
         view: LoginViews.SmsChallenge,
-        credentials: this.credentials
+        credentials: this.credentials,
       });
     } catch (e) {
       this.alert.addServerFailure(e);

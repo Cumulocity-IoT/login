@@ -14,7 +14,7 @@ import {
   PasswordStrengthService,
   PasswordValidationDirective,
   PasswordValidationService,
-  RequiredInputPlaceholderDirective
+  RequiredInputPlaceholderDirective,
 } from '@c8y/ngx-components';
 import { LoginEvent, LoginViews } from '../login.model';
 import { LoginService } from '../login.service';
@@ -34,8 +34,8 @@ import { LoginService } from '../login.service';
     MessageDirective,
     PasswordConfirm,
     PasswordCheckListComponent,
-    C8yTranslatePipe
-  ]
+    C8yTranslatePipe,
+  ],
 })
 export class ChangePasswordComponent implements OnInit {
   @Input() credentials: ICredentials;
@@ -47,7 +47,7 @@ export class ChangePasswordComponent implements OnInit {
     tenantId: '',
     email: '',
     newPassword: '',
-    newPasswordConfirm: ''
+    newPasswordConfirm: '',
   };
   emailReadOnly = false;
   passwordStrengthEnforced = false;
@@ -79,11 +79,11 @@ export class ChangePasswordComponent implements OnInit {
     private users: UserService,
     private options: OptionsService,
     private alert: AlertService,
-    private passwordValidation: PasswordValidationService
+    private passwordValidation: PasswordValidationService,
   ) {}
 
   // Keep form invalid when strength is enforced and checklist requirements aren't met.
-  passwordChecklistValidator: ValidatorFn = control =>
+  passwordChecklistValidator: ValidatorFn = (control) =>
     !this.passwordStrengthEnforced || this.requirementsFulfilled || !control.value
       ? null
       : { passwordStrengthChecklist: true };
@@ -95,7 +95,7 @@ export class ChangePasswordComponent implements OnInit {
 
     const [passwordStrengthEnforced, greenMinLength] = await Promise.all([
       this.passwordStrength.getPasswordStrengthEnforced(),
-      this.passwordStrength.getGreenMinLength()
+      this.passwordStrength.getGreenMinLength(),
     ]);
 
     this.passwordStrengthEnforced = passwordStrengthEnforced;
@@ -107,7 +107,7 @@ export class ChangePasswordComponent implements OnInit {
       token: this.credentials.token,
       email: this.model.email,
       newPassword: this.model.newPassword,
-      passwordStrength: PasswordStrength.GREEN // @TODO: MTM-58234 - Deprecated - currently Backend requires this parameter.
+      passwordStrength: PasswordStrength.GREEN, // @TODO: MTM-58234 - Deprecated - currently Backend requires this parameter.
     };
     try {
       this.isLoading = true;

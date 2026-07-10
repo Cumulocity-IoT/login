@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { DOCUMENT, inject, Injectable } from '@angular/core';
 import {
   ApplicationService,
   BearerAuthFromSessionStorage,
@@ -12,7 +12,7 @@ import {
   TenantService,
   UserService,
   ICurrentUser,
-  IUser
+  IUser,
 } from '@c8y/client';
 import { TenantUiService, ModalService, Status, SimplifiedAuthService } from '@c8y/ngx-components';
 import { gettext } from '@c8y/ngx-components/gettext';
@@ -22,13 +22,7 @@ import { BehaviorSubject, EMPTY } from 'rxjs';
 import { isEmpty } from 'lodash-es';
 import { TranslateService } from '@ngx-translate/core';
 import { LoginEvent, SsoData } from './login.model';
-import {
-  getStoredToken,
-  getStoredTfaToken,
-  TOKEN_KEY,
-  TFATOKEN_KEY,
-  isLocal
-} from '@c8y/bootstrap';
+import { getStoredToken, getStoredTfaToken, TOKEN_KEY, TFATOKEN_KEY } from '@c8y/bootstrap';
 
 /**
  * Service to manage the login.
@@ -49,7 +43,7 @@ export class LoginService extends SimplifiedAuthService {
     'code',
     'session_state',
     'error',
-    'error_description'
+    'error_description',
   ] as const;
 
   private readonly IDP_HINT_QUERY_PARAM = 'idp_hint';
@@ -61,36 +55,36 @@ export class LoginService extends SimplifiedAuthService {
     password_missmatch: gettext('Passwords do not match.'),
     maxlength: gettext('Password must have at least 8 characters and no more than 32.'),
     password_strength: gettext(
-      'Your password is not strong enough. Please include numbers, lower and upper case characters'
+      'Your password is not strong enough. Please include numbers, lower and upper case characters',
     ),
     remote_error: gettext('Server error occurred.'),
     email: gettext('Invalid email address.'),
     password_change: gettext('Your password is expired. Please set a new password.'),
     password_reset_token_expired: gettext(
-      'Password reset link expired. Please enter your email address to receive a new one.'
+      'Password reset link expired. Please enter your email address to receive a new one.',
     ),
     tfa_pin_invalid: gettext('The code you entered is invalid. Please try again.'),
     pattern_newPassword: gettext(
-      'Password must have at least {{ minLength }} characters and no more than {{ maxLength }} and can only contain letters, numbers and following symbols: {{ symbols }}'
+      'Password must have at least {{ minLength }} characters and no more than {{ maxLength }} and can only contain letters, numbers and following symbols: {{ symbols }}',
     ),
     internationalPhoneNumber: gettext(
-      'Must be a valid phone number (only digits, spaces, slashes ("/"), dashes ("-"), and plus ("+") allowed, for example: +49 9 876 543 210).'
+      'Must be a valid phone number (only digits, spaces, slashes ("/"), dashes ("-"), and plus ("+") allowed, for example: +49 9 876 543 210).',
     ),
     phone_number_error: gettext('Could not update phone number.'),
     pinAlreadySent: gettext(
-      'The verification code was already sent. For a new verification code, please click on the link above.'
+      'The verification code was already sent. For a new verification code, please click on the link above.',
     ),
     passwordConfirm: gettext('Passwords do not match.'),
-    tfaExpired: gettext('Two-factor authentication token expired.')
+    tfaExpired: gettext('Two-factor authentication token expired.'),
   };
 
   private SUCCESS_MESSAGES = {
     password_changed: gettext('Password changed. You can now log in using new password.'),
     password_reset_requested: gettext(
-      'Password reset request has been sent. Please check your email.'
+      'Password reset request has been sent. Please check your email.',
     ),
     resend_sms: gettext('Verification code SMS resent.'),
-    send_sms: gettext('Verification code SMS sent.')
+    send_sms: gettext('Verification code SMS sent.'),
   };
 
   private showTenantRegExp = new RegExp('showTenant');
@@ -102,6 +96,7 @@ export class LoginService extends SimplifiedAuthService {
   private tenantLoginOptionsService = inject(TenantLoginOptionsService);
   private modalService = inject(ModalService);
   private applicationService = inject(ApplicationService);
+  private document = inject(DOCUMENT);
 
   constructor() {
     super();
@@ -133,7 +128,7 @@ export class LoginService extends SimplifiedAuthService {
     return this.translateService.instant(this.ERROR_MESSAGES.pattern_newPassword, {
       minLength,
       maxLength: this.PASSWORD_MAX_LENGTH,
-      symbols: this.PASSWORD_ALLOWED_SYMBOLS
+      symbols: this.PASSWORD_ALLOWED_SYMBOLS,
     });
   }
 
@@ -150,7 +145,7 @@ export class LoginService extends SimplifiedAuthService {
   redirectToOauth() {
     const idpHint = this.getIdpHintFromQueryParams();
     const { initRequest, flowControlledByUI } = this.oauthOptions;
-    const fullPath = `${window.location.origin}${window.location.pathname}`;
+    const fullPath = `${this.document.location.origin}${this.document.location.pathname}`;
     const redirectUrl = encodeURIComponent(fullPath);
     const originUriParam = `${initRequest.includes('?') ? '&' : '?'}originUri=${redirectUrl}`;
     const urlObject = new URL(initRequest);
@@ -158,14 +153,14 @@ export class LoginService extends SimplifiedAuthService {
     if (flowControlledByUI) {
       this.client
         .fetch(`/tenant/oauth${urlObject.search}${originUriParam}`)
-        .then(res => this.handleErrorStatusCodes(res))
-        .then(res => res.json())
-        .then((res: any) => (window.location.href = res.redirectTo))
-        .catch(ex => this.showSsoError(ex));
+        .then((res) => this.handleErrorStatusCodes(res))
+        .then((res) => res.json())
+        .then((res: any) => (this.document.location.href = res.redirectTo))
+        .catch((ex) => this.showSsoError(ex));
     } else if (idpHint) {
-      window.location.href = `${initRequest}${originUriParam}&${this.IDP_HINT_QUERY_PARAM}=${idpHint}`;
+      this.document.location.href = `${initRequest}${originUriParam}&${this.IDP_HINT_QUERY_PARAM}=${idpHint}`;
     } else {
-      window.location.href = `${initRequest}${originUriParam}`;
+      this.document.location.href = `${initRequest}${originUriParam}`;
     }
   }
 
@@ -173,8 +168,8 @@ export class LoginService extends SimplifiedAuthService {
     const params = {
       method: 'GET',
       headers: {
-        Accept: 'text/html,application/xhtml+xml'
-      }
+        Accept: 'text/html,application/xhtml+xml',
+      },
     };
     let url = `/tenant/oauth?code=${encodeURIComponent(code)}`;
     if (sessionState) {
@@ -183,8 +178,8 @@ export class LoginService extends SimplifiedAuthService {
 
     return this.client
       .fetch(url, params)
-      .then(res => this.handleErrorStatusCodes(res))
-      .catch(ex => {
+      .then((res) => this.handleErrorStatusCodes(res))
+      .catch((ex) => {
         this.showSsoError(ex);
         throw new Error();
       });
@@ -192,13 +187,13 @@ export class LoginService extends SimplifiedAuthService {
 
   autoLogout() {
     const errorPattern = /invalid\scredentials.*pin.*generate/i;
-    const isTfaExpired = data =>
+    const isTfaExpired = (data) =>
       data && typeof data.message === 'string' && errorPattern.test(data.message);
     this.ui.currentUser
       .pipe(
-        switchMap(u =>
-          u ? this.api.hookResponse(({ response }) => response.status === 401) : EMPTY
-        )
+        switchMap((u) =>
+          u ? this.api.hookResponse(({ response }) => response.status === 401) : EMPTY,
+        ),
       )
       .subscribe(async (apiCall: any) => {
         const { response } = apiCall;
@@ -237,7 +232,7 @@ export class LoginService extends SimplifiedAuthService {
       this.alert.add({
         text: successMessage,
         type: 'success',
-        timeout: 0
+        timeout: 0,
       });
     }
   }
@@ -252,7 +247,7 @@ export class LoginService extends SimplifiedAuthService {
       const authStrategy = new BearerAuthFromSessionStorage();
       console.log(`Using BearerAuthFromSessionStorage`);
       return authStrategy;
-    } catch (e) {
+    } catch {
       // do nothing
     }
     let authStrategy: IAuthentication = this.cookieAuth;
@@ -284,7 +279,7 @@ export class LoginService extends SimplifiedAuthService {
    */
   async login(
     auth: IAuthentication = this.getAuthStrategy(),
-    credentials?: ICredentials
+    credentials?: ICredentials,
   ): Promise<boolean> {
     // To ensure backward compatibility, we need to verify whether the backend supports TFA
     // without requiring the use of /tenant with auth: base64. The tfaSupported flag indicates
@@ -328,9 +323,9 @@ export class LoginService extends SimplifiedAuthService {
     const token = this.setCredentials(
       {
         tenant: tenant.name,
-        user: (supportUserName ? `${supportUserName}$` : '') + user.userName
+        user: (supportUserName ? `${supportUserName}$` : '') + user.userName,
       },
-      auth
+      auth,
     );
 
     if (token) {
@@ -350,14 +345,14 @@ export class LoginService extends SimplifiedAuthService {
     const userHasAccessToApp =
       // in case of local development we do not need to verify if the user has access to the app
       // This way developers do not need to create the application in the tenant before developing
-      window.location.hostname === 'localhost' ||
+      this.document.location.hostname === 'localhost' ||
       (await this.userHasAccessToApp(user, redirectPath));
 
     if (!userHasAccessToApp) {
       return false;
     }
 
-    window.location.href = redirectPath;
+    this.document.location.href = redirectPath;
     return true;
   }
 
@@ -368,7 +363,7 @@ export class LoginService extends SimplifiedAuthService {
       if (redirectPathFromSessionStorage.includes('?')) {
         const { hash, searchParams, pathname } = new URL(
           redirectPathFromSessionStorage,
-          window.location.origin
+          this.document.location.origin,
         );
         for (const param of this.queryParamsToRemove) {
           searchParams.delete(param);
@@ -392,7 +387,7 @@ export class LoginService extends SimplifiedAuthService {
 
   async userHasAccessToApp(
     user: IUser | ICurrentUser,
-    redirectPath: string
+    redirectPath: string,
   ): Promise<false | string> {
     if (!redirectPath) {
       return false;
@@ -406,7 +401,7 @@ export class LoginService extends SimplifiedAuthService {
     try {
       await this.applicationService.getManifestOfContextPath(contextPathOfApp);
       return redirectPath;
-    } catch (e) {
+    } catch {
       return false;
     }
   }
@@ -480,14 +475,14 @@ export class LoginService extends SimplifiedAuthService {
         grant_type: 'PASSWORD',
         username: credentials.user,
         password: credentials.password,
-        ...(credentials.tfa !== undefined && { tfa_code: credentials.tfa })
+        ...(credentials.tfa !== undefined && { tfa_code: credentials.tfa }),
       });
       return await new FetchClient().fetch(this.getUrlForOauth(credentials), {
         method: 'POST',
         body: params.toString(),
         headers: {
-          'content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        }
+          'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        },
       });
     }
 
@@ -535,18 +530,18 @@ export class LoginService extends SimplifiedAuthService {
   }
 
   redirectToDomain(domain) {
-    const originUrl = new URL(window.location.href);
+    const originUrl = new URL(this.document.location.href);
     const redirectUrl = originUrl.href.replace(originUrl.hostname, domain);
-    window.location.href = redirectUrl;
+    this.document.location.href = redirectUrl;
   }
 
   showSsoError(error): void {
     const body = error
       ? this.translateService.instant(
           gettext(
-            '<p><strong>The following error was returned from the external authentication service:</strong></p><p><code>{{ error }}</code></p>.'
+            '<p><strong>The following error was returned from the external authentication service:</strong></p><p><code>{{ error }}</code></p>.',
           ),
-          { error }
+          { error },
         )
       : gettext('SSO login failed. Contact the administrator.');
 
@@ -566,7 +561,7 @@ export class LoginService extends SimplifiedAuthService {
    */
   async validateResetToken(
     token: string,
-    email: string
+    email: string,
   ): Promise<LoginEvent['recoverPasswordData']['tokenStatus']> {
     try {
       await this.user.validateResetToken(token, email);
@@ -598,7 +593,7 @@ export class LoginService extends SimplifiedAuthService {
     // just the stored token and nothing else (see BasicAuth.ts:31).
     const token = this.basicAuth.updateCredentials({
       tenant: credentials.tenant,
-      user: credentials.user
+      user: credentials.user,
     });
     const newCredentials = { token, ...credentials };
 
@@ -610,7 +605,8 @@ export class LoginService extends SimplifiedAuthService {
    * Running on localhost means development mode.
    */
   private isLocal(): boolean {
-    return isLocal();
+    const hostname = this.document.location.hostname;
+    return /127\.0\.0\.1/.test(hostname) || /localhost/.test(hostname);
   }
 
   /**
@@ -630,7 +626,7 @@ export class LoginService extends SimplifiedAuthService {
   }
 
   private isShowTenant(): boolean {
-    return this.showTenantRegExp.test(window.location.href);
+    return this.showTenantRegExp.test(this.document.location.href);
   }
 
   /**
@@ -686,7 +682,7 @@ export class LoginService extends SimplifiedAuthService {
     return {
       tenant: split[2],
       user: split[3],
-      password: split[4]
+      password: split[4],
     };
   }
 
@@ -710,7 +706,7 @@ export class LoginService extends SimplifiedAuthService {
   }
 
   private getIdpHintFromQueryParams(): string | null {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(this.document.location.search);
     return params.get(this.IDP_HINT_QUERY_PARAM) || null;
   }
 }

@@ -8,7 +8,7 @@ import {
   FormGroupComponent,
   RequiredInputPlaceholderDirective,
   C8yTranslatePipe,
-  AlertService
+  AlertService,
 } from '@c8y/ngx-components';
 import { gettext } from '@c8y/ngx-components/gettext';
 
@@ -22,8 +22,8 @@ import { gettext } from '@c8y/ngx-components/gettext';
     C8yTranslateDirective,
     FormGroupComponent,
     RequiredInputPlaceholderDirective,
-    C8yTranslatePipe
-  ]
+    C8yTranslatePipe,
+  ],
 })
 export class RecoverPasswordComponent implements OnInit {
   @Input() recoverPasswordData: LoginEvent['recoverPasswordData'];
@@ -32,13 +32,13 @@ export class RecoverPasswordComponent implements OnInit {
   isLoading = false;
   model = {
     email: '',
-    tenantId: ''
+    tenantId: '',
   };
 
   constructor(
     private users: UserService,
     public loginService: LoginService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {}
 
   ngOnInit() {

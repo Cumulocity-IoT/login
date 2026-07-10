@@ -5,9 +5,9 @@ import { StrengthValidatorService } from './strength-validator-service';
 @Directive({
   selector: '[passwordStrengthEnforced]',
   providers: [
-    { provide: NG_VALIDATORS, useExisting: PasswordStrengthValidatorDirective, multi: true }
+    { provide: NG_VALIDATORS, useExisting: PasswordStrengthValidatorDirective, multi: true },
   ],
-  standalone: true
+  standalone: true,
 })
 export class PasswordStrengthValidatorDirective implements Validator {
   private forced: boolean;

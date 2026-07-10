@@ -9,25 +9,12 @@
     <div class="login-form animated fadeIn">
       <main class="card-block p-b-0 form-group-lg">
         <span class="mainlogo {{ !isBrandLogoSet ? 'c8y-logo' : '' }}"></span>
-        <c8y-alert-outlet
-          class="m-b-24 d-block"
-          position="static"
-        ></c8y-alert-outlet>
+        <c8y-alert-outlet class="m-b-24 d-block" position="static"></c8y-alert-outlet>
         @switch (currentView) {
           @case (LOGIN_VIEWS.Credentials) {
             <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
-              <h2
-                class="m-b-8"
-                translate
-              >
-                Welcome
-              </h2>
-              <p
-                class="text-16 m-b-40"
-                translate
-              >
-                Log in to access your IoT platform.
-              </p>
+              <h2 class="m-b-8" translate>Welcome</h2>
+              <p class="text-16 m-b-40" translate>Log in to access your IoT platform.</p>
             </span>
             <c8y-credentials
               (onChangeView)="handleLoginTemplate($event)"
@@ -36,16 +23,8 @@
           }
           @case (LOGIN_VIEWS.RecoverPassword) {
             <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
-              <h2
-                class="m-b-8"
-                translate
-              >
-                Reset password
-              </h2>
-              <p
-                class="text-16 m-b-40"
-                translate
-              >
+              <h2 class="m-b-8" translate>Reset password</h2>
+              <p class="text-16 m-b-40" translate>
                 Enter your email address and we'll send you a secure link to reset your password.
               </p>
             </span>
@@ -92,17 +71,11 @@
           }
           @case (LOGIN_VIEWS.MissingApplicationAccess) {
             <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
-              <h3
-                class="m-b-8 d-flex a-i-center"
-                translate
-              >
+              <h3 class="m-b-8 d-flex a-i-center" translate>
                 <i class="dlt-c8y-icon-warning text-warning m-r-8"></i>
                 <strong>Access not available</strong>
               </h3>
-              <p
-                class="text-16 m-b-40"
-                translate
-              >
+              <p class="text-16 m-b-40" translate>
                 Your account doesn't have permission to open this application. Switch to an
                 available application below, log out, or contact your administrator to request
                 access.

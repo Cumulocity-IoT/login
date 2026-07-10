@@ -15,5 +15,5 @@ if (__MODE__ === 'production') {
 
 export function bootstrap(metadata: BootstrapMetaData) {
   appConfig.providers.push(...provideBootstrapMetadata(metadata));
-  return bootstrapApplication(BootstrapLoginComponent, appConfig).catch(err => console.log(err));
+  return bootstrapApplication(BootstrapLoginComponent, appConfig).catch((err) => console.log(err));
 }

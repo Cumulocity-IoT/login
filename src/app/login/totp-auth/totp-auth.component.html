@@ -1,12 +1,6 @@
-<div
-  class="legend form-block center"
-  translate
->
-  Two-factor authentication
-</div>
+<div class="legend form-block center" translate>Two-factor authentication</div>
 
-<c8y-totp-setup *ngIf="isSetup">
-</c8y-totp-setup>
+<c8y-totp-setup *ngIf="isSetup"> </c8y-totp-setup>
 <c8y-totp-challenge
   [isModal]="false"
   [loading]="loading"
@@ -15,4 +9,3 @@
   (onSuccess)="onTotpSuccess($event)"
   (totpUnconfirmedEmitter)="onCancel.emit()"
 ></c8y-totp-challenge>
-

@@ -10,7 +10,7 @@ async function applicationSetup() {
   const { loadOptions, applyOptions } = await import('@c8y/bootstrap');
   const options = await loadOptions();
   await applyOptions({
-    ...options
+    ...options,
   });
   const { bootstrap } = await import(
     /* webpackPreload: true */
@@ -20,6 +20,6 @@ async function applicationSetup() {
   const { name, contextPath, key } = options as Partial<IApplication>;
   bootstrap({
     options,
-    currentApp: { name, contextPath, key }
+    currentApp: { name, contextPath, key },
   }).then(removeProgress);
 }

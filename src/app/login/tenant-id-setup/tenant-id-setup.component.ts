@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, DOCUMENT, Inject, Output, EventEmitter } from '@angular/core';
 import { LoginEvent, LoginViews } from '../login.model';
 import { FetchClient } from '@c8y/client';
 import {
@@ -7,7 +7,7 @@ import {
   C8yTranslateDirective,
   FormGroupComponent,
   RequiredInputPlaceholderDirective,
-  C8yTranslatePipe
+  C8yTranslatePipe,
 } from '@c8y/ngx-components';
 import { LoginService } from '../login.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,8 +24,8 @@ import { FormsModule } from '@angular/forms';
     C8yTranslateDirective,
     FormGroupComponent,
     RequiredInputPlaceholderDirective,
-    C8yTranslatePipe
-  ]
+    C8yTranslatePipe,
+  ],
 })
 
 /**
@@ -38,7 +38,7 @@ export class TenantIdSetupComponent {
   @Output() onChangeView = new EventEmitter<LoginEvent>();
   LOGIN_VIEWS = LoginViews;
   model = {
-    tenant: ''
+    tenant: '',
   };
 
   constructor(
@@ -46,7 +46,8 @@ export class TenantIdSetupComponent {
     private ui: AppStateService,
     private loginService: LoginService,
     private alert: AlertService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   /**
@@ -63,8 +64,8 @@ export class TenantIdSetupComponent {
         this.alert.danger(
           this.translateService.instant(
             gettext('Could not find tenant with ID "{{ tenantId }}".'),
-            { tenantId: this.model.tenant }
-          )
+            { tenantId: this.model.tenant },
+          ),
         );
       } else {
         this.alert.addServerFailure(e);
@@ -78,13 +79,13 @@ export class TenantIdSetupComponent {
   redirectToCorrectDomain() {
     const loginRedirectDomain = this.loginService.loginMode.loginRedirectDomain;
     if (loginRedirectDomain) {
-      const alreadyOnCorrectDomain = window.location.href.includes(loginRedirectDomain);
+      const alreadyOnCorrectDomain = this.document.location.href.includes(loginRedirectDomain);
       if (!alreadyOnCorrectDomain) {
         this.loginService.redirectToDomain(loginRedirectDomain);
       } else {
         this.onChangeView.emit({
           view: LoginViews.Credentials,
-          loginViewParams: { showTenant: true, disableTenant: true }
+          loginViewParams: { showTenant: true, disableTenant: true },
         });
       }
     } else {

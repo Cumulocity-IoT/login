@@ -1,29 +1,31 @@
 .login-panel {
   display: grid;
   min-height: 100vh;
-  &.isc8y{
-    @media( min-width: 768px) {
+  &.isc8y {
+    @media (min-width: 768px) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 }
 
-c8y-bootstrap, c8y-login, c8y-cookie-banner {
+c8y-bootstrap,
+c8y-login,
+c8y-cookie-banner {
   display: contents;
 }
 
-.square{
+.square {
   background-color: var(--c8y-palette-gray-10);
   color: var(--c8y-palette-gray-90);
   display: none;
-  img{
+  img {
     max-width: 100%;
   }
   .c8y-dark-theme & {
     background-color: var(--c8y-palette-gray-100);
     color: var(--c8y-palette-gray-20);
   }
-  @media( min-width: 768px) {
+  @media (min-width: 768px) {
     display: flex;
     align-items: center;
     position: sticky;
@@ -34,8 +36,8 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
 }
 
 .c8y-system-theme {
-  @media (prefers-color-scheme: dark){
-    .square{
+  @media (prefers-color-scheme: dark) {
+    .square {
       background-color: var(--c8y-palette-gray-100);
       color: var(--c8y-palette-gray-20);
     }
@@ -53,7 +55,7 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
   }
 }
 
-.password-strength>div {
+.password-strength > div {
   position: relative;
   width: 100%;
   height: 4px;
@@ -61,7 +63,7 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
   background-color: var(--c8y-palette-gray-90);
 }
 
-.password-strength>.password-strength-label {
+.password-strength > .password-strength-label {
   float: left;
   color: var(--c8y-component-form-label-color, var(--c8y-root-component-form-label-color));
 }
@@ -92,7 +94,7 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
 .password-red {
   .password-bar {
     width: 25%;
-    background-color: var(--palette-status-danger, var(--c8y-palette-status-danger));;
+    background-color: var(--palette-status-danger, var(--c8y-palette-status-danger));
   }
 }
 
@@ -102,9 +104,9 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
   width: 100%;
   margin: auto;
   @media (min-width: 768px) {
-    animation-delay: .5s;
+    animation-delay: 0.5s;
     max-width: 550px;
-    .isc8y &{
+    .isc8y & {
       padding-left: 56px;
       margin-left: 0;
     }
@@ -120,7 +122,7 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
   max-width: 320px;
 }
 
-.mainlogo { 
+.mainlogo {
   background-image: var(--brand-logo-img, var(--c8y-brand-logo-img));
   width: 100%;
   max-width: 350px;
@@ -130,24 +132,23 @@ c8y-bootstrap, c8y-login, c8y-cookie-banner {
   background-size: contain;
   display: block;
   margin: 0 auto 32px;
-  &.c8y-logo{
+  &.c8y-logo {
     margin: 0 0 32px;
     background-position: top left;
-    filter: brightness(.4);
-    .c8y-dark-theme &{
+    filter: brightness(0.4);
+    .c8y-dark-theme & {
       filter: grayscale(1) contrast(0.5) brightness(1.4);
     }
   }
 }
 
 .c8y-system-theme {
-  @media (prefers-color-scheme: dark){
-    .mainlogo.c8y-logo{
-       filter: grayscale(1) contrast(0.5) brightness(1.4);
+  @media (prefers-color-scheme: dark) {
+    .mainlogo.c8y-logo {
+      filter: grayscale(1) contrast(0.5) brightness(1.4);
     }
   }
 }
-
 
 .mainlogo[src] {
   background: none;

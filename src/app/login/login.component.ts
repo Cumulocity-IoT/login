@@ -4,7 +4,7 @@ import {
   OnInit,
   HostListener,
   OnDestroy,
-  ViewEncapsulation
+  ViewEncapsulation,
 } from '@angular/core';
 import { ICredentials, TenantLoginOptionType } from '@c8y/client';
 import { LoginService } from './login.service';
@@ -14,7 +14,7 @@ import {
   AppStateService,
   AlertOutletComponent,
   C8yTranslateDirective,
-  C8yTranslatePipe
+  C8yTranslatePipe,
 } from '@c8y/ngx-components';
 import { gettext } from '@c8y/ngx-components/gettext';
 import { LoginEvent, LoginViews, SsoData, SsoError } from './login.model';
@@ -33,7 +33,7 @@ import { MissingApplicationAccessComponent } from './missing-application-access/
 @Component({
   selector: 'c8y-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.less'],
+  styleUrls: ['./login.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -48,8 +48,8 @@ import { MissingApplicationAccessComponent } from './missing-application-access/
     AsyncPipe,
     MissingApplicationAccessComponent,
     C8yTranslateDirective,
-    C8yTranslatePipe
-  ]
+    C8yTranslatePipe,
+  ],
 })
 export class LoginComponent implements OnInit, OnDestroy {
   currentView: LoginViews = LoginViews.None;
@@ -75,7 +75,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private options: OptionsService,
     private alert: AlertService,
     private credentialsFromQueryParamsService: CredentialsFromQueryParamsService,
-    public ui: AppStateService
+    public ui: AppStateService,
   ) {
     this.isBrandLogoSet = !!this.getValueForCSSVariable('--brand-logo-img');
     this.platformAnimationSrc = this.getPlatformAnimationPath();
@@ -129,7 +129,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     const defaultPath = './platform-animation.svg';
 
     const platformAnimationImagePath = this.getValueForCSSVariable(
-      '--login-platform-animation-img'
+      '--login-platform-animation-img',
     );
     if (platformAnimationImagePath) {
       return platformAnimationImagePath;
@@ -189,7 +189,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       if (tokenStatus === 'valid') {
         this.handleLoginTemplate({
           view: LoginViews.ChangePassword,
-          credentials: this.credentials
+          credentials: this.credentials,
         });
       } else {
         this.handleLoginTemplate({
@@ -197,8 +197,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           recoverPasswordData: {
             email,
             tokenStatus,
-            tenantId: this.loginService.getTenant()
-          }
+            tenantId: this.loginService.getTenant(),
+          },
         });
       }
     } else if (this.loginService.showTenantSetup()) {
@@ -234,14 +234,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   private async handleSso(ssoData: SsoData | SsoError) {
     if ('ssoError' in ssoData) {
       this.loginService.showSsoError(
-        decodeURIComponent(ssoData.ssoErrorDescription).replace(/\+/g, '%20')
+        decodeURIComponent(ssoData.ssoErrorDescription).replace(/\+/g, '%20'),
       );
       await this.reset(false);
     } else {
       this.loginService
         .loginBySso(ssoData)
         .then(() => this.loginService.login())
-        .catch(e => {
+        .catch((e) => {
           this.reset(false);
           if (e.res?.status) {
             this.alert.addServerFailure(e);

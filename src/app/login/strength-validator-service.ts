@@ -3,7 +3,7 @@ import { PasswordService } from '@c8y/ngx-components';
 import { PasswordStrength } from '@c8y/client';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StrengthValidatorService {
   constructor(private passwordService: PasswordService) {}

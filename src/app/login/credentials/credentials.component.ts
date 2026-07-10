@@ -8,7 +8,7 @@ import {
   FormGroupComponent,
   RequiredInputPlaceholderDirective,
   PasswordInputComponent,
-  C8yTranslatePipe
+  C8yTranslatePipe,
 } from '@c8y/ngx-components';
 import { gettext } from '@c8y/ngx-components/gettext';
 import { LoginEvent, LoginViews } from '../login.model';
@@ -30,15 +30,15 @@ import { FormsModule } from '@angular/forms';
     FormGroupComponent,
     RequiredInputPlaceholderDirective,
     PasswordInputComponent,
-    C8yTranslatePipe
-  ]
+    C8yTranslatePipe,
+  ],
 })
 export class CredentialsComponent implements OnInit {
   @Output() onChangeView = new EventEmitter<LoginEvent>();
 
   @Input() loginViewParams: CredentialsComponentParams = {
     disableTenant: false,
-    showTenant: false
+    showTenant: false,
   };
 
   LOGIN_VIEWS = LoginViews;
@@ -55,7 +55,7 @@ export class CredentialsComponent implements OnInit {
   constructor(
     public loginService: LoginService,
     public alert: AlertService,
-    private credentialsFromQueryParamsService: CredentialsFromQueryParamsService
+    private credentialsFromQueryParamsService: CredentialsFromQueryParamsService,
   ) {}
 
   ngOnInit() {
@@ -129,8 +129,8 @@ export class CredentialsComponent implements OnInit {
     if (/pin has already been generated/i.test(message)) {
       this.alert.warning(
         gettext(
-          'The verification code was already sent. For a new verification code, please click on the link above.'
-        )
+          'The verification code was already sent. For a new verification code, please click on the link above.',
+        ),
       );
     }
     this.alert.removeLastDanger();
@@ -141,8 +141,8 @@ export class CredentialsComponent implements OnInit {
     this.onChangeView.emit({ view: LoginViews.ProvidePhoneNumber, credentials: this.model });
     this.alert.warning(
       gettext(
-        'Two-factor authentication has been turned on for this account. Provide your phone number above to save it in your user profile and start receiving verification codes via SMS.'
-      )
+        'Two-factor authentication has been turned on for this account. Provide your phone number above to save it in your user profile and start receiving verification codes via SMS.',
+      ),
     );
   }
 }

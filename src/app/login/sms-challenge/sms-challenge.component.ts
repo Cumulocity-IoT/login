@@ -7,7 +7,7 @@ import {
   FormGroupComponent,
   RequiredInputPlaceholderDirective,
   C8yTranslatePipe,
-  AppStateService
+  AppStateService,
 } from '@c8y/ngx-components';
 import { gettext } from '@c8y/ngx-components/gettext';
 import { FormsModule } from '@angular/forms';
@@ -25,8 +25,8 @@ import { LoginEvent, LoginViews } from '../login.model';
     FormGroupComponent,
     RequiredInputPlaceholderDirective,
     NgClass,
-    C8yTranslatePipe
-  ]
+    C8yTranslatePipe,
+  ],
 })
 export class SmsChallengeComponent {
   @Input() credentials: ICredentials;
@@ -34,7 +34,7 @@ export class SmsChallengeComponent {
   @Output() onChangeView = new EventEmitter<LoginEvent>();
 
   model = {
-    smsToken: ''
+    smsToken: '',
   };
   isLoading = false;
 
@@ -44,7 +44,7 @@ export class SmsChallengeComponent {
     public loginService: LoginService,
     private users: UserService,
     private alert: AlertService,
-    private appState: AppStateService
+    private appState: AppStateService,
   ) {}
 
   async verifyTFACode() {
@@ -83,7 +83,7 @@ export class SmsChallengeComponent {
       await this.loginService.switchLoginMode({ ...credentials, tfa: this.model.smsToken });
       await this.loginService.authFulfilled();
       const result = await this.loginService.ensureUserPermissionsForRedirect(
-        this.appState.currentUser.value
+        this.appState.currentUser.value,
       );
       if (!result) {
         this.onChangeView.emit({ view: LoginViews.MissingApplicationAccess });
@@ -120,7 +120,7 @@ export class SmsChallengeComponent {
     try {
       await this.loginService.login(
         this.loginService.useBasicAuth({ tfa: tfaToken }),
-        this.credentials
+        this.credentials,
       );
       this.loginService.saveTFAToken(tfaToken, sessionStorage);
       if (this.loginService.rememberMe) {

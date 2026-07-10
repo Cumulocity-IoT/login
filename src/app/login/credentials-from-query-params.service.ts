@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { DOCUMENT, inject, Injectable } from '@angular/core';
 import { ICredentials } from '@c8y/client';
 
 @Injectable({ providedIn: 'root' })
 export class CredentialsFromQueryParamsService {
   private readonly queryParamsToHandle: Array<keyof ICredentials> = ['tenant', 'user'];
+  private readonly document = inject(DOCUMENT);
 
   /**
    * Retrieves any subset of credentials provided via queryParams
@@ -12,14 +13,14 @@ export class CredentialsFromQueryParamsService {
   getCredentialsFromQueryParams(): ICredentials {
     const credentials: ICredentials = {};
     try {
-      const params = new URLSearchParams(window.location.search);
-      this.queryParamsToHandle.forEach(param => {
+      const params = new URLSearchParams(this.document.location.search);
+      this.queryParamsToHandle.forEach((param) => {
         const value = this.getParameterFromQueryParams(params, param);
         if (value) {
           credentials[param] = value;
         }
       });
-    } catch (e) {
+    } catch {
       // URLSearchParams probably not available in all browsers (https://caniuse.com/urlsearchparams)
     }
     return credentials;
@@ -32,15 +33,15 @@ export class CredentialsFromQueryParamsService {
    */
   removeCredentialsFromQueryParams(): boolean {
     try {
-      const params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(this.document.location.search);
       const hasRemovedAtLeastOneParam = this.queryParamsToHandle
-        .map(param => this.removeParameterFromQueryParameters(params, param))
+        .map((param) => this.removeParameterFromQueryParameters(params, param))
         .reduceRight((prev, curr) => prev || curr, false);
       if (hasRemovedAtLeastOneParam) {
-        window.location.search = params.toString();
+        this.document.location.search = params.toString();
         return true;
       }
-    } catch (e) {
+    } catch {
       // URLSearchParams probably not available in all browsers (https://caniuse.com/urlsearchparams)
     }
     return false;
@@ -53,7 +54,7 @@ export class CredentialsFromQueryParamsService {
    */
   private removeParameterFromQueryParameters(
     params: URLSearchParams,
-    key: keyof ICredentials
+    key: keyof ICredentials,
   ): boolean {
     const keyAsString = `${key}`;
     if (!params.has(keyAsString)) {
@@ -71,7 +72,7 @@ export class CredentialsFromQueryParamsService {
    */
   private getParameterFromQueryParams(
     params: URLSearchParams,
-    key: keyof ICredentials
+    key: keyof ICredentials,
   ): string | null {
     const keyAsString = `${key}`;
     if (!params.has(keyAsString)) {

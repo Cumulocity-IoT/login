@@ -6,6 +6,6 @@ import { LoginComponent } from '../login/login.component';
   selector: 'c8y-bootstrap',
   templateUrl: './bootstrap-login.component.html',
   standalone: true,
-  imports: [LoginComponent, CookieBannerComponent]
+  imports: [LoginComponent, CookieBannerComponent],
 })
 export class BootstrapLoginComponent {}

@@ -1,6 +1,9 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
+  "cli": {
+    "packageManager": "npm"
+  },
   "newProjectRoot": "projects",
   "projects": {
     "login": {
@@ -17,9 +20,6 @@
         "build": {
           "builder": "@c8y/devkit:build",
           "options": {
-            "polyfills": [
-              "zone.js"
-            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "less",
             "assets": [
@@ -28,14 +28,12 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "@c8y/style/main.less",
-              "src/styles.less"
-            ],
+            "styles": ["@c8y/style/main.scss", "src/styles.less"],
             "aot": false,
             "main": "src/main.ts",
             "buildOptimizer": false,
             "outputPath": "dist/login",
+            "resourcesOutputPath": "resources",
             "allowedCommonJsDependencies": [
               "regenerator-runtime/runtime",
               "@cordobo/qrcode",
@@ -80,27 +78,13 @@
           },
           "defaultConfiguration": "development"
         },
-        "extract-i18n": {
-          "builder": "@c8y/devkit:extract-i18n"
-        },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "buildTarget": "login:build-test",
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "less",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": [
-              "src/styles.less"
-            ]
+            "runner": "vitest",
+            "runnerConfig": "vitest-config.ts"
           }
         },
         "deploy": {
@@ -115,8 +99,21 @@
           },
           "defaultConfiguration": "production"
         },
+        "extract-i18n": {
+          "builder": "@c8y/devkit:extract-i18n"
+        },
         "compile-i18n": {
           "builder": "@c8y/devkit:compile-i18n"
+        },
+        "build-test": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "polyfills": ["zone.js"],
+            "styles": [],
+            "aot": false
+          }
         }
       }
     }
