@@ -8,8 +8,8 @@ applicationSetup();
 
 async function applicationSetup() {
   const { loadOptions, applyOptions } = await import('@c8y/bootstrap');
-  const options = await loadOptions();
-  await applyOptions({
+  let options = await loadOptions();
+  options = await applyOptions({
     ...options,
   });
   const { bootstrap } = await import(
