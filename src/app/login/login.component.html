@@ -63,6 +63,7 @@
           @case (LOGIN_VIEWS.TotpChallenge) {
             <c8y-totp-auth
               (onCancel)="reset(false)"
+              (onChangeView)="handleLoginTemplate($event)"
               [view]="currentView"
               [credentials]="credentials"
             ></c8y-totp-auth>
@@ -70,6 +71,7 @@
           @case (LOGIN_VIEWS.TotpSetup) {
             <c8y-totp-auth
               (onCancel)="reset(false)"
+              (onChangeView)="handleLoginTemplate($event)"
               [view]="currentView"
               [credentials]="credentials"
             ></c8y-totp-auth>
