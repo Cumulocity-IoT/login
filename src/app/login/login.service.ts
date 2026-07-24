@@ -21,7 +21,8 @@ import { switchMap } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY } from 'rxjs';
 import { isEmpty } from 'lodash-es';
 import { TranslateService } from '@ngx-translate/core';
-import { LoginEvent, SsoData } from './login.model';
+import { Router } from '@angular/router';
+import { LoginEvent, LoginViews, SsoData } from './login.model';
 import { getStoredToken, getStoredTfaToken, TOKEN_KEY, TFATOKEN_KEY } from '@c8y/bootstrap';
 
 /**
@@ -34,6 +35,11 @@ export class LoginService extends SimplifiedAuthService {
   oauthOptions: ITenantLoginOption;
   isFirstLogin = true;
   automaticLoginInProgress$ = new BehaviorSubject(true);
+  get pendingDownloadBinaryId(): string | null {
+    return this._pendingDownloadBinaryId;
+  }
+
+  private _pendingDownloadBinaryId: string | null = null;
 
   regexp = /\/apps\/(public\/)?([^\/]+)(\/.*)?$/;
 
@@ -49,6 +55,8 @@ export class LoginService extends SimplifiedAuthService {
   private readonly IDP_HINT_QUERY_PARAM = 'idp_hint';
   private readonly PASSWORD_MAX_LENGTH = 32;
   private readonly PASSWORD_ALLOWED_SYMBOLS = '`~!@#$%^&*()_|+-=?;:\'",.<>{}[]\\/';
+  private readonly DOWNLOAD_PARAM = 'download';
+  private readonly DOWNLOAD_SESSION_KEY = 'c8yPendingDownloadId';
   private translateService = inject(TranslateService);
   ERROR_MESSAGES = {
     minlength: gettext('Password must have at least 8 characters and no more than 32.'),
@@ -97,6 +105,7 @@ export class LoginService extends SimplifiedAuthService {
   private modalService = inject(ModalService);
   private applicationService = inject(ApplicationService);
   private document = inject(DOCUMENT);
+  private router = inject(Router);
 
   constructor() {
     super();
@@ -337,7 +346,68 @@ export class LoginService extends SimplifiedAuthService {
     return this.ensureUserPermissionsForRedirect(user);
   }
 
+  /**
+   * Reads the binary download ID from the URL (hash fragment) or from
+   * sessionStorage (SSO return path). Clears it from the URL immediately and persists it in
+   * sessionStorage so it survives the OAuth redirect. Sets pendingDownloadBinaryId so that
+   * the post-auth redirect is suppressed when a download is pending.
+   * @returns The binary ID, or null when no download param is present.
+   */
+  initDownloadBinaryId(): string | null {
+    const stored = sessionStorage.getItem(this.DOWNLOAD_SESSION_KEY);
+
+    // Download links are always in the hash fragment (#/?download=<id>).
+    const binaryId =
+      this.router.parseUrl(this.document.location.hash.substring(1)).queryParams[
+        this.DOWNLOAD_PARAM
+      ] ?? null;
+
+    // Common case: no download param in URL or session — return early
+    if (!binaryId && !stored) {
+      return null;
+    }
+
+    if (binaryId) {
+      // Remove the download param from the URL without adding a history entry
+      this.router.navigate([], {
+        queryParams: { [this.DOWNLOAD_PARAM]: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+      // Replace any stale entry and persist the id across a potential SSO redirect
+      sessionStorage.removeItem(this.DOWNLOAD_SESSION_KEY);
+      sessionStorage.setItem(this.DOWNLOAD_SESSION_KEY, binaryId);
+      this._pendingDownloadBinaryId = binaryId;
+      return binaryId;
+    }
+
+    // SSO return: param no longer in URL but bridged via sessionStorage
+    sessionStorage.removeItem(this.DOWNLOAD_SESSION_KEY);
+    this._pendingDownloadBinaryId = stored;
+    return stored;
+  }
+
+  clearPendingDownload() {
+    this._pendingDownloadBinaryId = null;
+    sessionStorage.removeItem(this.DOWNLOAD_SESSION_KEY);
+  }
+
+  /**
+   * Resolves which view a caller should show once login()/ensureUserPermissionsForRedirect()
+   * reports that no redirect happened. A pending download always wins over the generic
+   * missing-access view, regardless of whether the user actually has application access,
+   * since the user came here to download a shared file, not to open an app.
+   */
+  getViewForSuppressedRedirect(): LoginViews {
+    return this.pendingDownloadBinaryId ? LoginViews.Download : LoginViews.MissingApplicationAccess;
+  }
+
   async ensureUserPermissionsForRedirect(user: IUser | ICurrentUser) {
+    // A pending download requires the user to stay on the login page.
+    // Suppress the post-auth redirect so the download view is shown instead.
+    if (this.pendingDownloadBinaryId) {
+      return false;
+    }
     const redirectPath = await this.getRedirectPath();
     if (!redirectPath) {
       return false;

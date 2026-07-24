@@ -14,7 +14,7 @@ import { gettext } from '@c8y/ngx-components/gettext';
 import { LoginEvent, LoginViews } from '../login.model';
 import { CredentialsFromQueryParamsService } from '../credentials-from-query-params.service';
 import { CredentialsComponentParams } from '../credentials-component-params';
-import { NgIf } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -23,7 +23,6 @@ import { FormsModule } from '@angular/forms';
   styles: [],
   standalone: true,
   imports: [
-    NgIf,
     IconDirective,
     FormsModule,
     C8yTranslateDirective,
@@ -85,7 +84,7 @@ export class CredentialsComponent implements OnInit {
       const basicAuth = this.loginService.useBasicAuth(this.model);
       const hasPermission = await this.loginService.login(basicAuth, this.model);
       if (!hasPermission) {
-        this.onChangeView.emit({ view: LoginViews.MissingApplicationAccess });
+        this.onChangeView.emit({ view: this.loginService.getViewForSuppressedRedirect() });
       }
     } catch (e) {
       if (e.res && e.res.headers && e.res.headers.get(this.PASSWORD_RESET_HEADER_NAME)) {

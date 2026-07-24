@@ -13,8 +13,20 @@
         @switch (currentView) {
           @case (LOGIN_VIEWS.Credentials) {
             <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">
-              <h2 class="m-b-8" translate>Welcome</h2>
-              <p class="text-16 m-b-40" translate>Log in to access your IoT platform.</p>
+              @if (downloadBinaryId) {
+                <div class="download-slot">
+                  <h3 class="m-b-8 d-flex a-i-center">
+                    <i class="dlt-c8y-icon-info-circle text-info m-r-8"></i>
+                    {{ 'File download' | translate }}
+                  </h3>
+                  <p class="text-16">
+                    {{ 'A file has been shared with you, log in to download it.' | translate }}
+                  </p>
+                </div>
+              } @else {
+                <h2 class="m-b-8" translate>Welcome</h2>
+                <p class="text-16 m-b-40" translate>Log in to access your IoT platform.</p>
+              }
             </span>
             <c8y-credentials
               (onChangeView)="handleLoginTemplate($event)"
@@ -70,6 +82,9 @@
           }
           @case (LOGIN_VIEWS.TenantIdSetup) {
             <c8y-tenant-id-setup (onChangeView)="handleLoginTemplate($event)"></c8y-tenant-id-setup>
+          }
+          @case (LOGIN_VIEWS.Download) {
+            <c8y-binary-download [binaryId]="downloadBinaryId!"></c8y-binary-download>
           }
           @case (LOGIN_VIEWS.MissingApplicationAccess) {
             <span class="{{ platformAnimationSrc ? '' : 'text-center' }}">

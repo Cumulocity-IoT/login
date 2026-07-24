@@ -12,7 +12,7 @@ import {
 import { gettext } from '@c8y/ngx-components/gettext';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { LoginEvent, LoginViews } from '../login.model';
+import { LoginEvent } from '../login.model';
 
 @Component({
   selector: 'c8y-sms-challenge',
@@ -86,7 +86,7 @@ export class SmsChallengeComponent {
         this.appState.currentUser.value,
       );
       if (!result) {
-        this.onChangeView.emit({ view: LoginViews.MissingApplicationAccess });
+        this.onChangeView.emit({ view: this.loginService.getViewForSuppressedRedirect() });
       }
     } catch (e) {
       const resStatus = e.res && e.res.status;

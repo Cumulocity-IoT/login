@@ -103,6 +103,7 @@ c8y-cookie-banner {
   padding: 32px;
   width: 100%;
   margin: auto;
+  min-width: 0;
   @media (min-width: 768px) {
     animation-delay: 0.5s;
     max-width: 550px;
@@ -153,4 +154,20 @@ c8y-cookie-banner {
 .mainlogo[src] {
   background: none;
   padding-bottom: 0;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.download-slot {
+  margin-bottom: 24px;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: var(--c8y-elevation-sm);
+}
+
+.text-truncate {
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

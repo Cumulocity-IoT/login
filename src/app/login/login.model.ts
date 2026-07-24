@@ -28,6 +28,7 @@ export enum LoginViews {
   ProvidePhoneNumber = 'PROVIDE_PHONE_NUMBER',
   TenantIdSetup = 'TENANT_ID_SETUP',
   MissingApplicationAccess = 'MISSING_APPLICATION_ACCESS',
+  Download = 'DOWNLOAD',
 }
 
 export type SsoData = {

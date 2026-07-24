@@ -29,6 +29,7 @@ import { TenantIdSetupComponent } from './tenant-id-setup/tenant-id-setup.compon
 import { ProvidePhoneNumberComponent } from './provide-phone-number/provide-phone-number.component';
 import { SmsChallengeComponent } from './sms-challenge/sms-challenge.component';
 import { MissingApplicationAccessComponent } from './missing-application-access/missing-application-access.component';
+import { BinaryDownloadComponent } from './binary-download/binary-download.component';
 
 @Component({
   selector: 'c8y-login',
@@ -47,6 +48,7 @@ import { MissingApplicationAccessComponent } from './missing-application-access/
     AlertOutletComponent,
     AsyncPipe,
     MissingApplicationAccessComponent,
+    BinaryDownloadComponent,
     C8yTranslateDirective,
     C8yTranslatePipe,
   ],
@@ -65,7 +67,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginViewParams: CredentialsComponentParams | { [key: string]: any } = {};
   recoverPasswordData: LoginEvent['recoverPasswordData'];
   displayAlerts = false;
-  private TOKEN_PARAM = 'token';
+  downloadBinaryId: string | null = null;
+
+  private readonly TOKEN_PARAM = 'token';
 
   /**
    * Just DI.
@@ -82,6 +86,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.downloadBinaryId = this.loginService.initDownloadBinaryId();
+
     const token = this.getParamAndClear(this.TOKEN_PARAM);
     const ssoData = this.getSsoData();
     if (ssoData) {
@@ -103,6 +109,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   handleLoginTemplate(event: LoginEvent) {
+    if (event.view === LoginViews.Download) {
+      this.enterDownloadView();
+      return;
+    }
     this.currentView = event.view;
     this.credentials = event.credentials || {};
     this.loginViewParams = event.loginViewParams || {};
@@ -117,7 +127,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   async reset(missingPermissions: boolean) {
     if (missingPermissions) {
-      this.handleLoginTemplate({ view: LoginViews.MissingApplicationAccess });
+      this.handleLoginTemplate({ view: this.loginService.getViewForSuppressedRedirect() });
       return;
     }
     this.loginService.reset();
@@ -208,6 +218,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
+  private enterDownloadView() {
+    this.currentView = LoginViews.Download;
+    this.loginService.clearPendingDownload();
+  }
+
   private getParamAndClear(paramName: string): string | undefined {
     const paramValue = this.options.get<string>(paramName);
     if (paramValue) {
@@ -241,6 +256,11 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.loginService
         .loginBySso(ssoData)
         .then(() => this.loginService.login())
+        .then((hasRedirected) => {
+          if (!hasRedirected && this.downloadBinaryId) {
+            this.enterDownloadView();
+          }
+        })
         .catch((e) => {
           this.reset(false);
           if (e.res?.status) {

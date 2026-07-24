@@ -1,0 +1,92 @@
+<div class="download-slot">
+  <h3 class="m-b-8">
+    @switch (state()) {
+      @case ('ready') {
+        {{ 'Your file is ready' | translate }}
+      }
+      @case ('error') {
+        <i class="text-danger m-r-8" c8yIcon="exclamation-circle"></i
+        >{{ 'The file could not be loaded' | translate }}
+      }
+      @default {
+        {{ 'File download' | translate }}
+      }
+    }
+  </h3>
+  @switch (state()) {
+    @case ('loading') {
+      <c8y-loading [attr.aria-label]="'Loading' | translate"></c8y-loading>
+    }
+    @case ('error') {
+      {{ errorMessage() }}
+    }
+    @case ('ready') {
+      @let mo = managedObject();
+      <p class="m-b-24">
+        {{ 'Click "Download" to save it.' | translate }}
+      </p>
+      <div class="d-flex a-i-start gap-16 m-b-24">
+        <i
+          class="icon-32 text-muted"
+          [c8yIcon]="{ name: mo?.name } | fileIcon"
+          aria-hidden="true"
+        ></i>
+        <div class="flex-grow min-width-0">
+          <p class="text-truncate m-b-0">
+            {{ mo?.name }}
+          </p>
+          <p>
+            <small class="text-muted">
+              <em>{{ 'Size' | translate }}:</em> {{ mo?.length | bytes }} |
+              <em>{{ 'Type' | translate }}:</em> {{ mo?.contentType }}
+            </small>
+          </p>
+          <p>
+            <small class="text-muted">
+              <em>{{ 'Last modified' | translate }}:</em> {{ mo?.lastUpdated | c8yDate }}
+            </small>
+          </p>
+        </div>
+      </div>
+      <button
+        class="btn btn-primary flex-no-shrink"
+        [title]="'Download' | translate"
+        type="button"
+        [attr.data-cy]="'c8y-login--download-button'"
+        [disabled]="isDownloading()"
+        (click)="download()"
+      >
+        @if (isDownloading()) {
+          <i class="icon-16 animated rotateOut" [c8yIcon]="'circle-o-notch'" aria-hidden="true"></i>
+        } @else {
+          <i [c8yIcon]="'download'" aria-hidden="true"></i>
+        }
+        {{ 'Download' | translate }}
+      </button>
+    }
+  }
+</div>
+@if (state() !== 'loading') {
+  @if (state() === 'ready') {
+    <p class="text-muted m-t-24 m-b-8">
+      {{
+        'You can also open one of your applications below — now, or after downloading the file.'
+          | translate
+      }}
+    </p>
+  }
+  @if (state() === 'error') {
+    <p class="text-muted m-t-24 m-b-8">
+      {{ 'You can also open one of your applications below.' | translate }}
+    </p>
+  }
+  <c8y-app-switcher-inline></c8y-app-switcher-inline>
+  <button
+    class="btn btn-default btn-lg btn-block m-t-16"
+    [title]="'Logout' | translate"
+    (click)="logout()"
+  >
+    <i [c8yIcon]="'logout'" aria-hidden="true"></i>
+    {{ 'Logout' | translate }}
+  </button>
+}
