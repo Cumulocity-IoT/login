@@ -1,6 +1,6 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { CoreModule, RouterModule } from '@c8y/ngx-components';
+import { CoreModule, provideSkipAppKeyHeader, RouterModule } from '@c8y/ngx-components';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -8,5 +8,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     importProvidersFrom(RouterModule.forRoot()),
     importProvidersFrom(CoreModule.forRoot()),
+    provideSkipAppKeyHeader(),
   ],
 };
