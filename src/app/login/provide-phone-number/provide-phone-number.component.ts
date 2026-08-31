@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
 import { LoginService } from '../login.service';
 import { LoginEvent, LoginViews } from '../login.model';
 import { ICredentials, UserService } from '@c8y/client';
@@ -26,6 +26,7 @@ import {
     PhoneValidationDirective,
     C8yTranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class ProvidePhoneNumberComponent {
   @Input() credentials: ICredentials;

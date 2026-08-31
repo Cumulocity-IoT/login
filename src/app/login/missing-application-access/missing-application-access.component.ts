@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AppSwitcherInlineComponent, C8yTranslatePipe, IconDirective } from '@c8y/ngx-components';
 import { LoginService } from '../login.service';
 
@@ -7,6 +7,7 @@ import { LoginService } from '../login.service';
   templateUrl: './missing-application-access.component.html',
   standalone: true,
   imports: [AppSwitcherInlineComponent, C8yTranslatePipe, IconDirective],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class MissingApplicationAccessComponent {
   private loginService = inject(LoginService);

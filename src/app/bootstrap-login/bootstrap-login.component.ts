@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CookieBannerComponent } from '@c8y/ngx-components';
 import { LoginComponent } from '../login/login.component';
 
@@ -7,5 +7,6 @@ import { LoginComponent } from '../login/login.component';
   templateUrl: './bootstrap-login.component.html',
   standalone: true,
   imports: [LoginComponent, CookieBannerComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class BootstrapLoginComponent {}

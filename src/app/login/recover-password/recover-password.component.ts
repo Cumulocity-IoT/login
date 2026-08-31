@@ -1,4 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  Input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { UserService } from '@c8y/client';
 import { LoginService } from '../login.service';
 import { LoginEvent, LoginViews } from '../login.model';
@@ -24,6 +31,7 @@ import { gettext } from '@c8y/ngx-components/gettext';
     RequiredInputPlaceholderDirective,
     C8yTranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class RecoverPasswordComponent implements OnInit {
   @Input() recoverPasswordData: LoginEvent['recoverPasswordData'];

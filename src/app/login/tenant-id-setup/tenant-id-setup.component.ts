@@ -1,4 +1,11 @@
-import { Component, DOCUMENT, Inject, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  DOCUMENT,
+  Inject,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { LoginEvent, LoginViews } from '../login.model';
 import { FetchClient } from '@c8y/client';
 import {
@@ -26,6 +33,7 @@ import { FormsModule } from '@angular/forms';
     RequiredInputPlaceholderDirective,
     C8yTranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 
 /**

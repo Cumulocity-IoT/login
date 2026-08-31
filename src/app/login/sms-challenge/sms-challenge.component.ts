@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
 import { UserService, ICredentials } from '@c8y/client';
 import { LoginService } from '../login.service';
 import {
@@ -27,6 +27,7 @@ import { LoginEvent } from '../login.model';
     NgClass,
     C8yTranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class SmsChallengeComponent {
   @Input() credentials: ICredentials;

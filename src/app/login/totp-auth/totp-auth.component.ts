@@ -1,4 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  Input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ICredentials, UserService } from '@c8y/client';
 import {
   AlertService,
@@ -16,6 +23,7 @@ import { gettext } from '@c8y/ngx-components/gettext';
   templateUrl: './totp-auth.component.html',
   standalone: true,
   imports: [C8yTranslateDirective, TotpSetupComponent, TotpChallengeComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class TotpAuthComponent implements OnInit {
   @Input() credentials: ICredentials;

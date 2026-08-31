@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule, NgModel, ValidatorFn } from '@angular/forms';
 import { ICredentials, IResetPassword, PasswordStrength, UserService } from '@c8y/client';
 import {
@@ -36,6 +44,7 @@ import { LoginService } from '../login.service';
     PasswordCheckListComponent,
     C8yTranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class ChangePasswordComponent implements OnInit {
   @Input() credentials: ICredentials;

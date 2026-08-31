@@ -5,6 +5,7 @@ import {
   HostListener,
   OnDestroy,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { ICredentials, TenantLoginOptionType } from '@c8y/client';
 import { LoginService } from './login.service';
@@ -52,6 +53,7 @@ import { BinaryDownloadComponent } from './binary-download/binary-download.compo
     C8yTranslateDirective,
     C8yTranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class LoginComponent implements OnInit, OnDestroy {
   currentView: LoginViews = LoginViews.None;

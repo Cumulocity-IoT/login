@@ -1,4 +1,11 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  Input,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { LoginService } from '../login.service';
 import { ICredentials } from '@c8y/client';
 import {
@@ -31,6 +38,7 @@ import { FormsModule } from '@angular/forms';
     PasswordInputComponent,
     C8yTranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class CredentialsComponent implements OnInit {
   @Output() onChangeView = new EventEmitter<LoginEvent>();
