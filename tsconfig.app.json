@@ -8,5 +8,5 @@
   },
   "files": ["src/main.ts"],
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts", "../ngx-components/**/*.spec.ts"]
+  "exclude": ["src/**/*.spec.ts", "../ngx-components/**/*.spec.ts", "../ngx-components/test"]
 }
